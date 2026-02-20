@@ -30,7 +30,9 @@ fi
 # ── Install Python dependency ─────────────────────────────────────────────────
 
 echo "Installing Python dependency (mutagen 1.47.0)…"
-python3 -m pip install --quiet --user "mutagen==1.47.0"
+# Use --break-system-packages for modern macOS with Homebrew Python (PEP 668)
+python3 -m pip install --quiet --user --break-system-packages "mutagen==1.47.0" 2>/dev/null || \
+    python3 -m pip install --quiet --user "mutagen==1.47.0"
 
 # ── Install the Python script ─────────────────────────────────────────────────
 

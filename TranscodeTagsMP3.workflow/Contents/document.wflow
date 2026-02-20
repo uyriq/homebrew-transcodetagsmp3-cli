@@ -46,13 +46,16 @@
 				<key>AMParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>python3 "$HOME/Library/Application Scripts/TranscodeTagsMP3/fix_mp3_tags.py" "$@"</string>
+					<string>for f in "$@"
+do
+    python3 "$HOME/Library/Application Scripts/TranscodeTagsMP3/fix_mp3_tags.py" "$f"
+done</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
-					<integer>1</integer>
+					<integer>0</integer>
 					<key>shell</key>
-					<string>/bin/bash</string>
+					<string>/bin/zsh</string>
 					<key>source</key>
 					<string></string>
 				</dict>
