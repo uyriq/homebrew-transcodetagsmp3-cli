@@ -7,9 +7,9 @@ Run with:
     pytest tests/
 """
 
+import hashlib
 import os
 import sys
-import tempfile
 
 import pytest
 
@@ -17,7 +17,7 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fix_mp3_tags import fix_encoding, fix_mp3_file  # noqa: E402
-from mutagen.id3 import ID3, ID3NoHeaderError, TIT2, TPE1, TALB, Encoding  # noqa: E402
+from mutagen.id3 import ID3, TIT2, TPE1, TALB, Encoding  # noqa: E402
 
 
 # ── Minimal valid MPEG1/Layer3 frame (for creating test MP3 files) ────────────
@@ -29,6 +29,14 @@ def _make_mp3(path: str) -> None:
     """Write a bare-bones MP3 file (one silent frame, no ID3 tags)."""
     with open(path, "wb") as fh:
         fh.write(_MINIMAL_MP3_FRAME)
+
+
+def _file_sha256(path: str) -> str:
+    """Return hex SHA-256 digest of a file's contents."""
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        h.update(fh.read())
+    return h.hexdigest()
 
 
 def _garble(text: str) -> str:
@@ -67,13 +75,10 @@ class TestFixEncoding:
         assert fix_encoding(text) == text
 
     def test_latin_text_unchanged(self):
-        """Pure Latin-1 text that also happens to be valid CP1251 should not
-        produce garbage – only Cyrillic CP1251 ranges are practically affected."""
-        text = "café"  # Latin-1 codepoint, decodes cleanly as CP1251 too
+        """Pure Latin-1 text must not be corrupted into Cyrillic."""
+        text = "café"
         result = fix_encoding(text)
-        # The result may differ in character representation but must be readable;
-        # for pure Latin-1 overlapping CP1251 the round-trip is identity.
-        assert isinstance(result, str)
+        assert result == text
 
 
 # ── fix_mp3_file integration tests ───────────────────────────────────────────
@@ -109,12 +114,12 @@ class TestFixMp3File:
         tags.add(TIT2(encoding=Encoding.UTF8, text=["Hello World"]))
         tags.save(mp3)
 
-        mtime_before = os.path.getmtime(mp3)
+        sha_before = _file_sha256(mp3)
         result = fix_mp3_file(mp3)
-        mtime_after = os.path.getmtime(mp3)
+        sha_after = _file_sha256(mp3)
 
         assert result is True
-        assert mtime_before == mtime_after  # file must NOT have been rewritten
+        assert sha_before == sha_after  # file must NOT have been rewritten
         assert str(ID3(mp3)["TIT2"]) == "Hello World"
 
     def test_no_id3_header_skipped(self, tmp_path):

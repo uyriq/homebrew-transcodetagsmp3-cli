@@ -42,14 +42,41 @@ def fix_encoding(text: str) -> str:
     Attempt to fix a Windows-1251 string that was stored/read as Latin-1.
 
     If *text* encodes cleanly to Latin-1 bytes and those bytes decode as valid
-    CP1251, return the corrected string.  Otherwise return *text* unchanged.
+    CP1251, and the result looks like genuine Cyrillic text, return the
+    corrected string.  Otherwise return *text* unchanged.
     """
+    # If the text already contains real Cyrillic, it was decoded correctly.
+    if any(0x0400 <= ord(ch) <= 0x04FF for ch in text):
+        return text
+
     try:
-        return text.encode("latin-1").decode("cp1251")
+        candidate = text.encode("latin-1").decode("cp1251")
     except (UnicodeEncodeError, UnicodeDecodeError):
         # Text contains characters above Latin-1 (already real Unicode) or
         # bytes that are not valid CP1251 — leave it alone.
         return text
+
+    if candidate == text:
+        return text
+
+    # Heuristic: only apply the fix when the decoded candidate is predominantly
+    # Cyrillic.  This prevents corrupting legitimate Latin-1 text (e.g. "café")
+    # where a stray CP1251 mapping might produce a lone Cyrillic character.
+    cyrillic_count = 0
+    alpha_count = 0
+    for ch in candidate:
+        if ch.isalpha():
+            alpha_count += 1
+            if 0x0400 <= ord(ch) <= 0x04FF:
+                cyrillic_count += 1
+
+    if cyrillic_count == 0:
+        return text
+    # alpha_count is at least cyrillic_count > 0 here, so no division by zero.
+    if alpha_count and (cyrillic_count / alpha_count) < 0.5:
+        return text
+
+    return candidate
 
 
 def fix_mp3_file(filepath: str) -> bool:
@@ -69,25 +96,27 @@ def fix_mp3_file(filepath: str) -> bool:
         print(f"  Error reading tags: {exc}")
         return False
 
-    changed = False
+    any_changed = False
     for key in list(tags.keys()):
         frame = tags[key]
         if not hasattr(frame, "text"):
             continue
 
+        frame_changed = False
         new_texts = []
         for fragment in frame.text:
             fixed = fix_encoding(fragment)
             if fixed != fragment:
                 print(f"  {key}: {fragment!r}  →  {fixed!r}")
-                changed = True
+                frame_changed = True
             new_texts.append(fixed)
 
-        if changed:
+        if frame_changed:
             frame.text = new_texts
             frame.encoding = Encoding.UTF8
+            any_changed = True
 
-    if changed:
+    if any_changed:
         try:
             tags.save(filepath, v2_version=3)
             print("  Saved.")

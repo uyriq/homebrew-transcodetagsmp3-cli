@@ -2,8 +2,8 @@
 # install.sh — Install TranscodeTagsMP3 Quick Action for Finder on macOS (Apple Silicon).
 #
 # What this script does:
-#   1. Verifies Python 3 and pip3 are available.
-#   2. Installs the `mutagen` Python library.
+#   1. Verifies Python 3 is available.
+#   2. Installs the `mutagen` Python library (pinned version, user install).
 #   3. Copies fix_mp3_tags.py to ~/Library/Application Scripts/TranscodeTagsMP3/.
 #   4. Copies the Automator Quick Action to ~/Library/Services/.
 #   5. Prints instructions for enabling the Quick Action in System Settings.
@@ -27,15 +27,10 @@ if ! command -v python3 &>/dev/null; then
     exit 1
 fi
 
-if ! command -v pip3 &>/dev/null; then
-    echo "Error: pip3 is required.  It usually ships with python3." >&2
-    exit 1
-fi
-
 # ── Install Python dependency ─────────────────────────────────────────────────
 
-echo "Installing Python dependency (mutagen)…"
-pip3 install --quiet --upgrade mutagen
+echo "Installing Python dependency (mutagen 1.47.0)…"
+python3 -m pip install --quiet --user "mutagen==1.47.0"
 
 # ── Install the Python script ─────────────────────────────────────────────────
 
