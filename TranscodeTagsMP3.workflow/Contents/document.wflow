@@ -46,10 +46,70 @@
 				<key>AMParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>for f in "$@"
+					<string>#!/bin/zsh
+# TranscodeTagsMP3 - Logging wrapper for debugging
+LOG="$HOME/Library/Logs/TranscodeTagsMP3.log"
+SCRIPT="$HOME/Library/Application Scripts/TranscodeTagsMP3/fix_mp3_tags.py"
+
+# Create log directory if needed
+mkdir -p "$HOME/Library/Logs"
+
+# Log session start
+{
+    echo "═══════════════════════════════════════════════════════"
+    echo "TranscodeTagsMP3 - $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "═══════════════════════════════════════════════════════"
+    echo "Arguments count: $#"
+    echo "Arguments: $@"
+    echo "-----------------------------------------------------------"
+    echo "Environment:"
+    echo "  PATH=$PATH"
+    echo "  HOME=$HOME"
+    echo "  SHELL=$SHELL"
+    echo "  USER=$USER"
+    echo "-----------------------------------------------------------"
+    echo "Script path: $SCRIPT"
+    echo "Script exists: $([[ -f "$SCRIPT" ]] &amp;&amp; echo "YES" || echo "NO")"
+    echo "Python version:"
+    /usr/bin/python3 --version 2>&amp;1
+    echo "-----------------------------------------------------------"
+    echo "Processing files:"
+} &gt;&gt; "$LOG" 2>&gt;&amp;1
+
+# Process each file
+for f in "$@"
 do
-    /usr/bin/python3 "$HOME/Library/Application Scripts/TranscodeTagsMP3/fix_mp3_tags.py" "$f"
-done</string>
+    {
+        echo ""
+        echo "→ File: $f"
+        echo "  Exists: $([[ -f "$f" ]] &amp;&amp; echo "YES" || echo "NO")"
+        
+        if [[ -f "$SCRIPT" &amp;&amp; -f "$f" ]]; then
+            echo "  Running: /usr/bin/python3 \"$SCRIPT\" \"$f\""
+            /usr/bin/python3 "$SCRIPT" "$f" 2>&amp;1
+            EXIT_CODE=$?
+            echo "  Exit code: $EXIT_CODE"
+            
+            if [[ $EXIT_CODE -ne 0 ]]; then
+                echo "  ⚠️  ERROR: Script failed with exit code $EXIT_CODE"
+            else
+                echo "  ✓ Success"
+            fi
+        else
+            echo "  ⚠️  ERROR: Script or file not found"
+            echo "    Script exists: $([[ -f "$SCRIPT" ]] &amp;&amp; echo "YES" || echo "NO")"
+            echo "    File exists: $([[ -f "$f" ]] &amp;&amp; echo "YES" || echo "NO")"
+        fi
+    } &gt;&gt; "$LOG" 2>&gt;&amp;1
+done
+
+# Log completion
+{
+    echo "-----------------------------------------------------------"
+    echo "Completed at $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "═══════════════════════════════════════════════════════"
+    echo ""
+} &gt;&gt; "$LOG" 2>&gt;&amp;1</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>

@@ -74,14 +74,30 @@ After installation, enable the service in one of these places:
 1. Select one or more `.mp3` files in Finder.
 2. Right-click → **Quick Actions** → **Fix MP3 Tags Encoding**.
 
-The script runs silently in the background. By default, output is not saved.
-To capture logs, you must manually edit the workflow in Automator:
+**Logging:** The Quick Action automatically logs all operations to:
+```
+~/Library/Logs/TranscodeTagsMP3.log
+```
 
-1. Open `~/Library/Services/TranscodeTagsMP3.workflow`
-2. Modify the shell command to redirect output:
-   ```bash
-   python3 ~/path/to/fix_mp3_tags.py "$@" >> ~/Library/Logs/fix_mp3_tags.log 2>&1
-   ```
+Each run logs:
+- Timestamp and arguments
+- Environment variables (PATH, HOME, etc.)
+- Python version
+- Each file processed with success/error status
+- Full stdout and stderr output
+- Exit codes
+
+To view the log:
+```bash
+# View the entire log
+cat ~/Library/Logs/TranscodeTagsMP3.log
+
+# Follow the log in real-time
+tail -f ~/Library/Logs/TranscodeTagsMP3.log
+
+# View just the most recent session
+tail -50 ~/Library/Logs/TranscodeTagsMP3.log
+```
 
 ### Command line
 
