@@ -48,12 +48,12 @@
 					<key>COMMAND_STRING</key>
 					<string>for f in "$@"
 do
-    python3 "$HOME/Library/Application Scripts/TranscodeTagsMP3/fix_mp3_tags.py" "$f"
+    /usr/bin/python3 "$HOME/Library/Application Scripts/TranscodeTagsMP3/fix_mp3_tags.py" "$f"
 done</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
-					<integer>0</integer>
+					<integer>1</integer>
 					<key>shell</key>
 					<string>/bin/zsh</string>
 					<key>source</key>

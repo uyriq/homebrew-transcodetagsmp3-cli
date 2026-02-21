@@ -14,6 +14,8 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
 
 - [x] Create `TranscodeTagsMP3.workflow` — Automator Quick Action scoped to `public.mp3`
 - [x] Create `install.sh` — one-shot installer (mutagen, script, workflow)
+- [x] Fix install.sh mutagen installation — add `--break-system-packages` flag for PEP 668 (hack, to improve later)
+- [x] Fix Automator workflow configuration — use inputMethod=1 (as arguments) and /usr/bin/python3 full path
 
 ## Testing
 
@@ -39,6 +41,8 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
 
 ## Future / ideas
 
+- [ ] Improve mutagen installation method — explore alternatives to `--break-system-packages` (venv, pipx, etc.)
+- [ ] Add workflow error logging/debugging to help troubleshoot Service configuration issues
 - [ ] Add support for ID3v1 tags (currently only ID3v2 frames are processed)
 - [ ] Add optional verbose/quiet flag to CLI
 - [ ] Add `--dry-run` mode that prints what would change without saving
