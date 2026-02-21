@@ -51,6 +51,11 @@ if [[ -d "$DEST" ]]; then
 fi
 cp -r "$SCRIPT_DIR/$WORKFLOW_NAME" "$DEST"
 
+# Refresh macOS Services cache
+echo "Refreshing macOS Services cache…"
+/System/Library/CoreServices/pbs -flush 2>/dev/null || true
+killall Finder 2>/dev/null || true
+
 # ── Done ──────────────────────────────────────────────────────────────────────
 
 echo ""
@@ -60,10 +65,18 @@ echo "How to use:"
 echo "  1. Select one or more .mp3 files in Finder."
 echo "  2. Right-click → Quick Actions → Fix MP3 Tags Encoding."
 echo ""
-echo "If the Quick Action is not visible, enable it in:"
-echo "  System Settings → Privacy & Security → Extensions → Finder Extensions"
-echo "  — or —"
-echo "  System Settings → Keyboard → Keyboard Shortcuts → Services → Files and Folders"
+echo "Troubleshooting:"
+echo "  • If Quick Action shows an error, check the log:"
+echo "    ~/Library/Logs/TranscodeTagsMP3.log"
+echo ""
+echo "  • If Quick Action is not visible, enable it in:"
+echo "    System Settings → Privacy & Security → Extensions → Finder Extensions"
+echo "    — or —"
+echo "    System Settings → Keyboard → Keyboard Shortcuts → Services → Files and Folders"
+echo ""
+echo "  • If you see 'not configured correctly', try:"
+echo "    - Reboot your Mac to refresh the Services cache"
+echo "    - Or run: /System/Library/CoreServices/pbs -flush"
 echo ""
 echo "You can also run the script directly from the command line:"
 echo "  python3 \"$APP_SCRIPTS_DIR/fix_mp3_tags.py\" file1.mp3 file2.mp3"

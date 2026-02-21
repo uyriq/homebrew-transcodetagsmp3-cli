@@ -79,25 +79,44 @@ After installation, enable the service in one of these places:
 ~/Library/Logs/TranscodeTagsMP3.log
 ```
 
-Each run logs:
-- Timestamp and arguments
-- Environment variables (PATH, HOME, etc.)
-- Python version
-- Each file processed with success/error status
-- Full stdout and stderr output
-- Exit codes
+**Note:** The log file is only created when the workflow actually runs. If you see "Service cannot be run because it is not configured correctly" error, the log won't exist yet.
 
 To view the log:
 ```bash
-# View the entire log
+# View the log (if it exists)
 cat ~/Library/Logs/TranscodeTagsMP3.log
 
 # Follow the log in real-time
 tail -f ~/Library/Logs/TranscodeTagsMP3.log
-
-# View just the most recent session
-tail -50 ~/Library/Logs/TranscodeTagsMP3.log
 ```
+
+**Troubleshooting "not configured correctly" error:**
+
+1. **Reinstall and refresh the Services cache:**
+   ```bash
+   cd transcodetagsmp3
+   bash install.sh
+   # Then reboot or run:
+   /System/Library/CoreServices/pbs -flush
+   ```
+
+2. **Open the workflow in Automator to check for errors:**
+   ```bash
+   open ~/Library/Services/TranscodeTagsMP3.workflow
+   ```
+   - Verify the shell is `/bin/zsh`
+   - Verify "Pass input" is set to "as arguments"
+   - Check for any error messages
+
+3. **Test the Python script directly:**
+   ```bash
+   /usr/bin/python3 ~/Library/Application\ Scripts/TranscodeTagsMP3/fix_mp3_tags.py /path/to/test.mp3
+   ```
+
+4. **Check Console.app** for system-level errors:
+   - Open Console.app
+   - Search for "TranscodeTagsMP3" or "Automator"
+   - Look for error messages when attempting to run the service
 
 ### Command line
 
