@@ -37,7 +37,9 @@ garbled_latin1_string.encode("latin-1").decode("cp1251")
 | `fix_mp3_tags.py`            | Core Python script — reads ID3 tags, detects mis-encoded frames, converts to UTF-8, saves          |
 | `run_fix_mp3_tags.sh`        | Wrapper script with logging — called by Automator workflow to handle redirection                   |
 | `requirements.txt`           | Python dependency (`mutagen`)                                                                      |
-| `install.sh`                 | One-shot installer: installs `mutagen`, copies the script and wrapper, installs the Automator Quick Action |
+| `install.sh`                 | One-shot installer: installs `mutagen`, copies scripts and wrapper, installs the Automator Quick Action |
+| `diagnose.sh`                | Diagnostic script: checks installation, identifies problems                                         |
+| `cleanup.sh`                 | Complete cleanup: removes all components and caches before reinstalling                             |
 | `TranscodeTagsMP3.workflow/` | Automator Quick Action that wires Finder → wrapper script → Python script                          |
 | `tests/`                     | `pytest` unit and integration tests                                                                |
 
@@ -93,31 +95,64 @@ tail -f ~/Library/Logs/TranscodeTagsMP3.log
 
 **Troubleshooting "not configured correctly" error:**
 
-1. **Reinstall and refresh the Services cache:**
+**If Automator shows "cat" command or "to stdin":** This means macOS has cached a corrupted version of the workflow. Use the aggressive cleanup procedure:
+
+1. **Run the diagnostic script to confirm the problem:**
    ```bash
    cd transcodetagsmp3
+   bash diagnose.sh
+   ```
+   This will show exactly what's wrong and which components are installed correctly.
+
+2. **Complete cleanup:**
+   ```bash
+   bash cleanup.sh
+   ```
+   This removes all traces including caches.
+
+3. **Reboot your Mac** (essential for clearing all caches)
+
+4. **Reinstall:**
+   ```bash
    bash install.sh
-   # Then reboot or run:
-   /System/Library/CoreServices/pbs -flush
    ```
 
-2. **Open the workflow in Automator to check for errors:**
+5. **Verify in Automator:**
    ```bash
    open ~/Library/Services/TranscodeTagsMP3.workflow
    ```
-   - Verify the shell is `/bin/zsh`
-   - Verify "Pass input" is set to "as arguments"
-   - Check for any error messages
+   Should show:
+   - Command: `/bin/zsh "$HOME/Library/Application Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh" "$@"`
+   - Pass input: **as arguments** (NOT "to stdin")
+   - Shell: `/bin/zsh`
 
-3. **Test the Python script directly:**
+6. **Test the Quick Action with MP3 files**
+
+**If still failing after cleanup:**
+
+1. **Test components individually:**
    ```bash
-   /usr/bin/python3 ~/Library/Application\ Scripts/TranscodeTagsMP3/fix_mp3_tags.py /path/to/test.mp3
+   # Test wrapper script directly
+   bash ~/Library/Application\ Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh /path/to/test.mp3
+   
+   # Check if log was created
+   cat ~/Library/Logs/TranscodeTagsMP3.log
    ```
 
-4. **Check Console.app** for system-level errors:
+2. **Check Console.app** for system-level errors:
    - Open Console.app
    - Search for "TranscodeTagsMP3" or "Automator"
    - Look for error messages when attempting to run the service
+
+3. **Manual workflow creation:** If automated installation keeps failing, you can create the workflow manually in Automator:
+   - Open Automator
+   - New Document → Quick Action
+   - Workflow receives: **audio files** in **Finder**
+   - Add action: "Run Shell Script"
+   - Shell: `/bin/zsh`
+   - Pass input: **as arguments**
+   - Script: `/bin/zsh "$HOME/Library/Application Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh" "$@"`
+   - Save as "Fix MP3 Tags Encoding"
 
 ### Command line
 
