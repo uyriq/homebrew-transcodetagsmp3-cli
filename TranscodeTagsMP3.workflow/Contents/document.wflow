@@ -46,29 +46,7 @@
 				<key>AMParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>#!/bin/zsh
-LOG="$HOME/Library/Logs/TranscodeTagsMP3.log"
-SCRIPT="$HOME/Library/Application Scripts/TranscodeTagsMP3/fix_mp3_tags.py"
-
-mkdir -p "$HOME/Library/Logs"
-
-exec &gt;&gt; "$LOG" 2&gt;&amp;1
-
-echo "=========================================="
-echo "TranscodeTagsMP3 - $(date)"
-echo "Files: $#"
-echo "PATH: $PATH"
-echo "=========================================="
-
-for f in "$@"; do
-    echo ""
-    echo "Processing: $f"
-    /usr/bin/python3 "$SCRIPT" "$f"
-    echo "Exit code: $?"
-done
-
-echo "Completed: $(date)"
-echo ""</string>
+					<string>/bin/zsh "$HOME/Library/Application Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh" "$@"</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>

@@ -35,9 +35,10 @@ garbled_latin1_string.encode("latin-1").decode("cp1251")
 | File                         | Purpose                                                                                            |
 | ---------------------------- | -------------------------------------------------------------------------------------------------- |
 | `fix_mp3_tags.py`            | Core Python script — reads ID3 tags, detects mis-encoded frames, converts to UTF-8, saves          |
+| `run_fix_mp3_tags.sh`        | Wrapper script with logging — called by Automator workflow to handle redirection                   |
 | `requirements.txt`           | Python dependency (`mutagen`)                                                                      |
-| `install.sh`                 | One-shot installer: installs `mutagen`, copies the script, and installs the Automator Quick Action |
-| `TranscodeTagsMP3.workflow/` | Automator Quick Action that wires Finder → `fix_mp3_tags.py`                                       |
+| `install.sh`                 | One-shot installer: installs `mutagen`, copies the script and wrapper, installs the Automator Quick Action |
+| `TranscodeTagsMP3.workflow/` | Automator Quick Action that wires Finder → wrapper script → Python script                          |
 | `tests/`                     | `pytest` unit and integration tests                                                                |
 
 ---

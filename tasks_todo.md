@@ -17,6 +17,7 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
 - [x] Fix install.sh mutagen installation — add `--break-system-packages` flag for PEP 668 (hack, to improve later)
 - [x] Fix Automator workflow configuration — use inputMethod=1 (as arguments) and /usr/bin/python3 full path
 - [x] Add comprehensive logging to workflow — captures stdout/stderr/args/env to ~/Library/Logs/TranscodeTagsMP3.log
+- [x] Create separate wrapper script to avoid XML entity parsing issues in Automator workflow
 
 ## Testing
 

@@ -41,6 +41,10 @@ mkdir -p "$APP_SCRIPTS_DIR"
 cp "$SCRIPT_DIR/fix_mp3_tags.py" "$APP_SCRIPTS_DIR/"
 chmod +x "$APP_SCRIPTS_DIR/fix_mp3_tags.py"
 
+echo "Installing wrapper script to $APP_SCRIPTS_DIR …"
+cp "$SCRIPT_DIR/run_fix_mp3_tags.sh" "$APP_SCRIPTS_DIR/"
+chmod +x "$APP_SCRIPTS_DIR/run_fix_mp3_tags.sh"
+
 # ── Install the Automator Quick Action ───────────────────────────────────────
 
 echo "Installing Automator Quick Action to $SERVICES_DIR …"
