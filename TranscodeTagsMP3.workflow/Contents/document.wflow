@@ -46,7 +46,7 @@
 				<key>AMParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>/bin/zsh "$HOME/Library/Application Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh" "$@"</string>
+					<string>/bin/zsh ~/Library/Application\ Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh "$@"</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>

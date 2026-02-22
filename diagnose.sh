@@ -77,10 +77,14 @@ if [[ -d "$WORKFLOW_PATH" ]]; then
         COMMAND=$(sed -n '/<key>COMMAND_STRING<\/key>/,/<\/string>/p' "$WFLOW_FILE" | grep '<string>' | sed 's/.*<string>//; s/<\/string>.*//')
         echo "    $COMMAND"
         
-        if [[ "$COMMAND" == "cat" ]] || [[ "$COMMAND" == *"cat"* ]]; then
-            check_fail "COMMAND is corrupted (showing 'cat')"
+        if [[ "$COMMAND" == "cat" ]]; then
+            check_fail "COMMAND is corrupted (showing literal 'cat')"
+        elif [[ "$COMMAND" == *"run_fix_mp3_tags.sh"* ]]; then
+            check_pass "COMMAND contains wrapper script reference - looks correct"
+        elif [[ -z "$COMMAND" || "$COMMAND" == "List" ]]; then
+            check_fail "COMMAND is empty or showing placeholder text"
         else
-            check_pass "COMMAND looks correct"
+            check_warn "COMMAND does not reference expected wrapper script: $COMMAND"
         fi
         
         # Check inputMethod
@@ -158,24 +162,58 @@ if [[ -f "$WORKFLOW_PATH/Contents/document.wflow" ]]; then
     COMMAND=$(sed -n '/<key>COMMAND_STRING<\/key>/,/<\/string>/p' "$WORKFLOW_PATH/Contents/document.wflow" | grep '<string>' | sed 's/.*<string>//; s/<\/string>.*//')
     INPUT_METHOD=$(sed -n '/<key>inputMethod<\/key>/,/<integer>/p' "$WORKFLOW_PATH/Contents/document.wflow" | grep '<integer>' | sed 's/.*<integer>//; s/<\/integer>.*//')
     
-    if [[ "$COMMAND" == "cat" ]] || [[ "$INPUT_METHOD" == "0" ]]; then
-        echo "⚠️  WORKFLOW IS CORRUPTED IN MACOS CACHE"
+    NEEDS_FIX=0
+    
+    if [[ "$COMMAND" == "cat" ]]; then
+        echo "⚠️  WORKFLOW COMMAND IS CORRUPTED (showing 'cat')"
+        NEEDS_FIX=1
+    elif [[ ! "$COMMAND" == *"run_fix_mp3_tags.sh"* ]]; then
+        echo "⚠️  WORKFLOW COMMAND DOESN'T REFERENCE WRAPPER SCRIPT"
+        echo "   Current: $COMMAND"
+        echo "   Expected: Should contain 'run_fix_mp3_tags.sh'"
+        NEEDS_FIX=1
+    fi
+    
+    if [[ "$INPUT_METHOD" == "0" ]]; then
+        echo "⚠️  WORKFLOW inputMethod IS WRONG (0=stdin, should be 1=arguments)"
+        echo "   This causes 'Files: 0' and prevents MP3 files from being passed"
+        NEEDS_FIX=1
+    fi
+    
+    if [[ $NEEDS_FIX -eq 1 ]]; then
         echo ""
-        echo "The workflow file on disk may be correct, but macOS is using a cached"
-        echo "corrupted version. Try these steps:"
+        echo "The workflow is corrupted in macOS cache. Follow these steps:"
         echo ""
         echo "1. Run the cleanup script:"
         echo "   bash cleanup.sh"
         echo ""
-        echo "2. Reboot your Mac"
+        echo "2. Reboot your Mac (essential to clear all caches)"
         echo ""
         echo "3. Reinstall:"
         echo "   bash install.sh"
         echo ""
         echo "4. Open Automator to verify the workflow:"
         echo "   open ~/Library/Services/TranscodeTagsMP3.workflow"
-        echo "   Check that it shows the wrapper script command, not 'cat'"
-        echo "   Check that 'Pass input' is 'as arguments', not 'to stdin'"
+        echo "   Check that:"
+        echo "   - Command contains: run_fix_mp3_tags.sh"
+        echo "   - Pass input is: 'as arguments' (NOT 'to stdin')"
+        echo "   - Shell is: /bin/zsh"
+    else
+        echo "✓ Workflow configuration looks correct"
+        echo ""
+        if [[ -f "$HOME/Library/Logs/TranscodeTagsMP3.log" ]]; then
+            LAST_FILES=$(tail -50 "$HOME/Library/Logs/TranscodeTagsMP3.log" | grep "Files:" | tail -1)
+            if [[ "$LAST_FILES" == *"Files: 0"* ]]; then
+                echo "⚠️  Log shows 'Files: 0' - workflow may not be receiving file arguments"
+                echo "   This can happen if:"
+                echo "   - Files weren't selected in Finder before running the service"
+                echo "   - The workflow cache hasn't been refreshed"
+                echo "   Try:"
+                echo "   1. Select actual MP3 files in Finder"
+                echo "   2. Right-click → Services → Fix MP3 Tags Encoding"
+                echo "   3. Check log again: cat ~/Library/Logs/TranscodeTagsMP3.log"
+            fi
+        fi
     fi
 fi
 
