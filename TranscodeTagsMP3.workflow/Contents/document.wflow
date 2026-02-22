@@ -54,7 +54,7 @@
 					<key>shell</key>
 					<string>/bin/zsh</string>
 					<key>source</key>
-					<string></string>
+					<string>/bin/zsh ~/Library/Application\ Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh "$@"</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.RunShellScript</string>
@@ -93,7 +93,7 @@
 					<key>0</key>
 					<dict>
 						<key>default value</key>
-						<integer>0</integer>
+						<integer>1</integer>
 						<key>name</key>
 						<string>inputMethod</string>
 						<key>required</key>

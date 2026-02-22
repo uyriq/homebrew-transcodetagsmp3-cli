@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/zsh
 # diagnose.sh - Diagnostic script for TranscodeTagsMP3 installation
 #
 # This script checks all components and helps identify why the workflow isn't working
@@ -122,6 +122,31 @@ if command -v python3 &>/dev/null; then
     fi
 else
     check_fail "python3 NOT FOUND"
+fi
+
+# Check Python candidates used by the wrapper script at runtime.
+# The wrapper augments PATH and searches these paths in order; at least one
+# must have mutagen for the workflow to work.
+echo ""
+echo "4b. Checking python3 candidates used by the wrapper script..."
+WRAPPER_FOUND_PYTHON=""
+for _candidate in /opt/homebrew/bin/python3 /usr/local/bin/python3 /usr/bin/python3; do
+    if [[ -x "$_candidate" ]]; then
+        if "$_candidate" -c "import mutagen" 2>/dev/null; then
+            _ver=$("$_candidate" --version 2>&1)
+            _mut=$("$_candidate" -c "import mutagen; print(mutagen.version_string)")
+            check_pass "$_candidate ($_ver) — mutagen $_mut ✓"
+            WRAPPER_FOUND_PYTHON="$_candidate"
+        else
+            check_warn "$_candidate — mutagen NOT installed here"
+        fi
+    fi
+done
+if [[ -z "$WRAPPER_FOUND_PYTHON" ]]; then
+    check_fail "No candidate python3 has mutagen — the wrapper will fail at runtime"
+    echo "    Fix: run install.sh (installs mutagen for the active python3)"
+else
+    check_pass "Wrapper will use: $WRAPPER_FOUND_PYTHON"
 fi
 echo ""
 

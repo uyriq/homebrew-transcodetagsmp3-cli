@@ -18,6 +18,10 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
 - [x] Fix Automator workflow configuration — use inputMethod=1 (as arguments) and /usr/bin/python3 full path
 - [x] Add comprehensive logging to workflow — captures stdout/stderr/args/env to ~/Library/Logs/TranscodeTagsMP3.log
 - [x] Create separate wrapper script to avoid XML entity parsing issues in Automator workflow
+- [x] Fix wrapper script Python discovery — augment PATH for Homebrew and search candidate python3 paths for mutagen
+- [x] Fix install.sh — verify mutagen is importable from at least one candidate python3 after installation
+- [x] Fix Automator COMMAND_STRING — replace `~/` tilde with `${HOME}` for reliable expansion in restricted environment
+- [x] Update diagnose.sh — check all candidate python3 paths for mutagen to surface path-mismatch issues
 
 ## Testing
 
