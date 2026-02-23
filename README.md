@@ -137,6 +137,57 @@ tail -f ~/Library/Logs/TranscodeTagsMP3.log
 
 6. **Test the Quick Action with MP3 files**
 
+### Manual Workflow Configuration (Alternative Method)
+
+If automatic installation fails or you want to create the workflow manually in Automator:
+
+1. **Open Automator:**
+   ```bash
+   open -a Automator
+   ```
+
+2. **Create a new Quick Action:**
+   - File → New
+   - Choose "Quick Action" (or "Service" on older macOS versions)
+
+3. **Configure the workflow settings** (top section):
+   - **Workflow receives:** `files or folders` 
+   - **in:** `Finder`
+   - Leave "Input is" and other options at default
+
+4. **Add the "Run Shell Script" action:**
+   - Search for "Run Shell Script" in the actions library (left sidebar)
+   - Drag it to the workflow area (right side)
+
+5. **Configure the shell script action:**
+   - **Shell:** `/bin/zsh`
+   - **Pass input:** `to stdin` (this is critical - NOT "as arguments")
+   - **Script content:** Replace the default `cat` with:
+     ```bash
+     /bin/zsh ~/Library/Application\ Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh "$@"
+     ```
+
+6. **Save the workflow:**
+   - File → Save
+   - **Name:** "Fix MP3 Tags Encoding"
+   - **Location:** ~/Library/Services/ (default, should be pre-selected)
+
+7. **Verify the configuration:**
+   - The script box should show the full command with the wrapper script path
+   - "Pass input" should be set to `to stdin`
+   - Shell should be `/bin/zsh`
+
+8. **Test the workflow:**
+   - Select MP3 files in Finder
+   - Right-click → Services → "Fix MP3 Tags Encoding"
+   - Check the log: `cat ~/Library/Logs/TranscodeTagsMP3.log`
+
+**Important Notes:**
+- The `"$@"` in the command is used by the wrapper script, not by the Automator action itself
+- Using "to stdin" (inputMethod=0) is the correct configuration for this workflow
+- The path uses backslash to escape the space in "Application Scripts"
+- After manual creation, you may need to enable the service in System Settings → Privacy & Security → Extensions
+
 **If still failing after cleanup:**
 
 1. **Test components individually:**
