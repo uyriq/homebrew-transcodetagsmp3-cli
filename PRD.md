@@ -34,7 +34,7 @@ MP3 files tagged on Windows systems often store Cyrillic text as raw Windows-125
 
 ### 2.2 User Interface
 
-- **FR-7:** Provide macOS Finder integration via Quick Action or Services (right-click context menu)
+- **FR-7:** Provide macOS Finder integration via Quick Action (right-click → Quick Actions context menu)
 - **FR-8:** Support command-line invocation for advanced users
 - **FR-9:** Run silently with background logging for Finder integration
 - **FR-10:** Provide diagnostic and troubleshooting tools
@@ -54,7 +54,7 @@ MP3 files tagged on Windows systems often store Cyrillic text as raw Windows-125
 - **NFR-1:** Never corrupt MP3 audio data (tags only)
 - **NFR-2:** Graceful error handling with informative messages
 
-### 3.3 Usability
+### 3.2 Usability
 
 - **NFR-3:** Clear error messages in log files
 
@@ -68,7 +68,7 @@ MP3 files tagged on Windows systems often store Cyrillic text as raw Windows-125
 
 ### 4.1 System Components
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    User Interaction                      │
 │  Finder Context Menu → Quick Action → Automator Workflow│
@@ -96,7 +96,7 @@ MP3 files tagged on Windows systems often store Cyrillic text as raw Windows-125
 
 #### 4.2.1 Automator Workflow (`TranscodeTagsMP3.workflow`)
 
-- **Type:** Quick Action (Service)
+- **Type:** Quick Action
 - **Trigger:** Right-click on MP3 files in Finder
 - **Input:** Audio files (`public.mp3` or `com.apple.Automator.fileSystemObject.audio`)
 - **Action:** Run Shell Script
@@ -186,7 +186,7 @@ MP3 files tagged on Windows systems often store Cyrillic text as raw Windows-125
 
 #### Python Dependencies
 
-```
+```text
 mutagen==1.47.0
 ```
 
@@ -196,14 +196,14 @@ mutagen==1.47.0
 
 #### Testing Dependencies (Development Only)
 
-```
+```text
 pytest>=7.0
 mutagen>=1.46
 ```
 
 ### 5.3 macOS System Components
 
-- **Automator:** Quick Action (Service) framework
+- **Automator:** Quick Action framework
 - **Finder:** File browser integration
 - **Services Database:** `/System/Library/CoreServices/pbs`
 - **Application Scripts:** Sandboxed script storage location
@@ -223,7 +223,7 @@ mutagen>=1.46
 
 - **File System Access:** Read/write access to user-selected MP3 files
 - **Application Scripts Access:** Read access to `~/Library/Application Scripts/TranscodeTagsMP3/`
-- **Services:** Ability to register and run Quick Actions (preferable over Services)
+- **Services:** Ability to register and run Quick Actions
 - **No Network Access:** Application operates entirely offline
 
 ### 6.2 Security Considerations
@@ -257,10 +257,10 @@ mutagen>=1.46
 - **Implementation:** Access only to user-selected files passed as arguments
 - **Benefit:** Enhanced security without code signing
 
-#### macOS Services
+#### macOS Quick Actions Registration
 
-- **Requirement:** Workflows must be properly configured XML property lists
-- **Implementation:** Valid Automator workflow with correct service metadata
+- **Requirement:** Workflows must be properly configured XML property lists; no `NSRequiredContext` restriction so action appears in Quick Actions (not the Services sub-menu)
+- **Implementation:** Valid Automator workflow with correct Quick Action metadata
 - **Cache Management:** Services database refresh required after installation
 
 ### 7.2 Python PEP 668 Compliance
@@ -430,7 +430,7 @@ python3 -m pytest tests/ -v
 
 ### 13.2 Common Issues
 
-1. **"Service cannot be run"**: Workflow corrupted especiallly script part (run cleanup + reboot)
+1. **"Service cannot be run"**: Workflow corrupted or misconfigured (run cleanup + reboot)
 2. **"No such file or directory"**: Path quoting issue (fixed in latest version)
 3. **"Files: 0"**: Wrong inputMethod in cached workflow (run cleanup + reboot)
 4. **"externally-managed-environment"**: PEP 668 issue (fixed with `--break-system-packages`)

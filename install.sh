@@ -76,15 +76,14 @@ mkdir -p "$DEST/Contents"
 cp "$SCRIPT_DIR/$WORKFLOW_NAME/Contents/Info.plist" "$DEST/Contents/Info.plist"
 
 # Write document.wflow directly — never copy from cache or let pbs restore a stale version.
-# source= is the key the Run Shell Script action actually reads (not COMMAND_STRING).
-# inputMethod=1 means "pass input as arguments" (not stdin).
+# inputMethod=0 means "pass input to stdin"; the wrapper reads stdin when $# is 0.
 cat > "$DEST/Contents/document.wflow" << 'WFLOW_EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>521.1</string>
+	<string>523.2</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
@@ -102,14 +101,14 @@ cat > "$DEST/Contents/document.wflow" << 'WFLOW_EOF'
 					<true/>
 					<key>Types</key>
 					<array>
-						<string>com.apple.cocoa.path</string>
+						<string>com.apple.cocoa.string</string>
 					</array>
 				</dict>
 				<key>AMActionVersion</key>
 				<string>2.0.3</string>
 				<key>AMApplication</key>
 				<array>
-					<string>Finder</string>
+					<string>Automator</string>
 				</array>
 				<key>AMParameterProperties</key>
 				<dict>
@@ -124,18 +123,31 @@ cat > "$DEST/Contents/document.wflow" << 'WFLOW_EOF'
 					<key>source</key>
 					<dict/>
 				</dict>
-				<key>AMParameters</key>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.cocoa.string</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run Shell Script.action</string>
+				<key>ActionName</key>
+				<string>Run Shell Script</string>
+				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
 					<string>/bin/zsh ~/Library/Application\ Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh "$@"</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
-					<integer>1</integer>
+					<integer>0</integer>
 					<key>shell</key>
 					<string>/bin/zsh</string>
 					<key>source</key>
-					<string>/bin/zsh ~/Library/Application\ Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh "$@"</string>
+					<string></string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.RunShellScript</string>
@@ -167,14 +179,14 @@ cat > "$DEST/Contents/document.wflow" << 'WFLOW_EOF'
 				<string>C3D4E5F6-A7B8-9012-CDEF-123456789012</string>
 				<key>UnlocalizedApplications</key>
 				<array>
-					<string>Finder</string>
+					<string>Automator</string>
 				</array>
 				<key>arguments</key>
 				<dict>
 					<key>0</key>
 					<dict>
 						<key>default value</key>
-						<integer>1</integer>
+						<integer>0</integer>
 						<key>name</key>
 						<string>inputMethod</string>
 						<key>required</key>
@@ -187,9 +199,9 @@ cat > "$DEST/Contents/document.wflow" << 'WFLOW_EOF'
 					<key>1</key>
 					<dict>
 						<key>default value</key>
-						<string></string>
+						<false/>
 						<key>name</key>
-						<string>shell</string>
+						<string>CheckedForUserDefaultShell</string>
 						<key>required</key>
 						<string>0</string>
 						<key>type</key>
@@ -210,32 +222,83 @@ cat > "$DEST/Contents/document.wflow" << 'WFLOW_EOF'
 						<key>uuid</key>
 						<string>2</string>
 					</dict>
+					<key>3</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>COMMAND_STRING</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>3</string>
+					</dict>
+					<key>4</key>
+					<dict>
+						<key>default value</key>
+						<string>/bin/sh</string>
+						<key>name</key>
+						<string>shell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>4</string>
+					</dict>
 				</dict>
 				<key>isViewVisible</key>
-				<true/>
+				<integer>1</integer>
 				<key>location</key>
-				<string>309.000000:253.000000</string>
+				<string>432.750000:305.000000</string>
 				<key>nibPath</key>
-				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/English.lproj/RunShellScriptView.nib</string>
+				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
-			<true/>
+			<integer>1</integer>
 		</dict>
 	</array>
 	<key>connectors</key>
 	<dict/>
 	<key>workflowMetaData</key>
 	<dict>
+		<key>applicationBundleID</key>
+		<string>com.apple.finder</string>
+		<key>applicationBundleIDsByPath</key>
+		<dict>
+			<key>/System/Library/CoreServices/Finder.app</key>
+			<string>com.apple.finder</string>
+		</dict>
+		<key>applicationPath</key>
+		<string>/System/Library/CoreServices/Finder.app</string>
+		<key>applicationPaths</key>
+		<array>
+			<string>/System/Library/CoreServices/Finder.app</string>
+		</array>
+		<key>inputTypeIdentifier</key>
+		<string>com.apple.Automator.fileSystemObject</string>
+		<key>outputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>presentationMode</key>
+		<integer>15</integer>
+		<key>processesInput</key>
+		<false/>
 		<key>serviceApplicationBundleID</key>
 		<string>com.apple.finder</string>
 		<key>serviceApplicationPath</key>
 		<string>/System/Library/CoreServices/Finder.app</string>
 		<key>serviceInputTypeIdentifier</key>
-		<string>com.apple.Automator.fileSystemObject.audio</string>
+		<string>com.apple.Automator.fileSystemObject</string>
 		<key>serviceOutputTypeIdentifier</key>
 		<string>com.apple.Automator.nothing</string>
 		<key>serviceProcessesInput</key>
-		<integer>0</integer>
+		<false/>
+		<key>systemImageName</key>
+		<string>NSTouchBarTagIcon</string>
+		<key>useAutomaticInputType</key>
+		<false/>
 		<key>workflowTypeIdentifier</key>
 		<string>com.apple.Automator.servicesMenu</string>
 	</dict>
@@ -245,6 +308,11 @@ WFLOW_EOF
 
 echo "   ✓ Workflow written ($(wc -c < "$DEST/Contents/document.wflow") bytes)"
 plutil -lint "$DEST/Contents/document.wflow" && echo "   ✓ Workflow plist valid"
+
+# Enable the Quick Action in the context menu (avoids user needing to visit System Settings)
+echo "Enabling Quick Action in context menu…"
+defaults write pbs NSServicesStatus -dict-add "Fix MP3 Tags Encoding" \
+    '{enabled_context_menu = 1; enabled_services_menu = 1;}' 2>/dev/null || true
 
 # Refresh macOS Services cache
 echo "Refreshing macOS Services cache…"
@@ -271,9 +339,8 @@ echo "  • If Quick Action shows an error, check the log:"
 echo "    ~/Library/Logs/TranscodeTagsMP3.log"
 echo ""
 echo "  • If Quick Action is not visible, enable it in:"
-echo "    System Settings → Privacy & Security → Extensions → Finder Extensions"
-echo "    — or —"
-echo "    System Settings → Keyboard → Keyboard Shortcuts → Services → Files and Folders"
+echo "    System Settings → Privacy & Security → Extensions → Finder"
+echo "    (Enable the checkbox next to 'Fix MP3 Tags Encoding')"
 echo ""
 echo "  • If you see 'not configured correctly', try:"
 echo "    - Reboot your Mac to refresh the Services cache"

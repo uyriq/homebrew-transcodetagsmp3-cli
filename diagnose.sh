@@ -235,7 +235,7 @@ if [[ -f "$WORKFLOW_PATH/Contents/document.wflow" ]]; then
                 echo "   - The workflow cache hasn't been refreshed"
                 echo "   Try:"
                 echo "   1. Select actual MP3 files in Finder"
-                echo "   2. Right-click → Services → Fix MP3 Tags Encoding"
+                echo "   2. Right-click → Quick Actions → Fix MP3 Tags Encoding"
                 echo "   3. Check log again: cat ~/Library/Logs/TranscodeTagsMP3.log"
             fi
         fi
@@ -249,7 +249,7 @@ echo "  # Test Python script directly:"
 echo "  python3 '$SCRIPT_PATH' /path/to/test.mp3"
 echo ""
 echo "  # Test wrapper script directly:"
-echo "  bash '$WRAPPER_PATH' /path/to/test.mp3"
+echo "  #!/bin/zsh  '$WRAPPER_PATH' /path/to/test.mp3"
 echo ""
 echo "  # Check log:"
 echo "  cat ~/Library/Logs/TranscodeTagsMP3.log"

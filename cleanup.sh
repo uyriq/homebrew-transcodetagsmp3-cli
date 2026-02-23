@@ -45,7 +45,7 @@ else
 fi
 
 echo ""
-echo "4. Removing Automator and Services caches..."
+echo "4. Removing Automator and Quick Actions caches..."
 # Remove Automator-related caches
 CACHE_DIRS=(
     "$HOME/Library/Caches/com.apple.Automator"
@@ -69,7 +69,7 @@ if [[ -f "$NSSERVICES" ]]; then
 fi
 
 echo ""
-echo "5. Flushing Services database and restarting system daemons..."
+echo "5. Flushing Quick Actions database and restarting system daemons..."
 # Flush the Services (pbs) database
 /System/Library/CoreServices/pbs -flush 2>/dev/null && echo "   ✓ pbs -flush" || echo "   - pbs not available"
 

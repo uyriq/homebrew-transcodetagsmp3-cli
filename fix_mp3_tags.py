@@ -105,6 +105,9 @@ def fix_mp3_file(filepath: str) -> bool:
         frame_changed = False
         new_texts = []
         for fragment in frame.text:
+            if not isinstance(fragment, str):
+                new_texts.append(fragment)
+                continue
             fixed = fix_encoding(fragment)
             if fixed != fragment:
                 print(f"  {key}: {fragment!r}  →  {fixed!r}")

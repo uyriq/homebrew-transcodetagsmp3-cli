@@ -8,8 +8,11 @@ SCRIPT="$HOME/Library/Application Scripts/TranscodeTagsMP3/fix_mp3_tags.py"
 # Create log directory
 mkdir -p "$HOME/Library/Logs"
 
-# Redirect all output to log file
-exec >> "$LOG" 2>&1
+# Rotate: keep the previous session as .log.1, start fresh each run
+[[ -f "$LOG" ]] && mv -f "$LOG" "${LOG}.1"
+
+# Redirect all output to a fresh log file
+exec > "$LOG" 2>&1
 
 # Augment PATH — Automator runs with a minimal environment (/usr/bin:/bin only).
 # Add Homebrew prefixes (Apple Silicon and Intel) so python3 resolves correctly.
@@ -29,7 +32,7 @@ done
 # Log session start
 echo "=========================================="
 echo "TranscodeTagsMP3 - $(date)"
-echo "Files: $#"
+echo "Args: $#"
 echo "Python: ${PYTHON3:-NOT FOUND}"
 echo "PATH: $PATH"
 echo "=========================================="
@@ -40,8 +43,19 @@ if [[ -z "$PYTHON3" ]]; then
     exit 1
 fi
 
-# Process each file passed as argument
-for f in "$@"; do
+# Collect files: prefer $@ (Pass input: as arguments), fall back to stdin
+# (Pass input: to stdin sends newline-separated paths when workflow is in text mode)
+files=("$@")
+if [[ ${#files[@]} -eq 0 ]] && ! [ -t 0 ]; then
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && files+=("$line")
+    done
+fi
+
+echo "Files collected: ${#files[@]}"
+
+# Process each file
+for f in "${files[@]}"; do
     echo ""
     echo "Processing: $f"
     "$PYTHON3" "$SCRIPT" "$f"
