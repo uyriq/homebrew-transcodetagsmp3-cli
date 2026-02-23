@@ -14,6 +14,14 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
 
 - [x] Create `TranscodeTagsMP3.workflow` — Automator Quick Action scoped to `public.mp3`
 - [x] Create `install.sh` — one-shot installer (mutagen, script, workflow)
+- [x] Fix install.sh mutagen installation — add `--break-system-packages` flag for PEP 668 (hack, to improve later)
+- [x] Fix Automator workflow configuration — use inputMethod=1 (as arguments) and /usr/bin/python3 full path
+- [x] Add comprehensive logging to workflow — captures stdout/stderr/args/env to ~/Library/Logs/TranscodeTagsMP3.log
+- [x] Create separate wrapper script to avoid XML entity parsing issues in Automator workflow
+- [x] Fix wrapper script Python discovery — augment PATH for Homebrew and search candidate python3 paths for mutagen
+- [x] Fix install.sh — verify mutagen is importable from at least one candidate python3 after installation
+- [x] Fix Automator COMMAND_STRING — replace `~/` tilde with `${HOME}` for reliable expansion in restricted environment
+- [x] Update diagnose.sh — check all candidate python3 paths for mutagen to surface path-mismatch issues
 
 ## Testing
 
@@ -39,6 +47,7 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
 
 ## Future / ideas
 
+- [ ] Improve mutagen installation method — explore alternatives to `--break-system-packages` (venv, pipx, etc.)
 - [ ] Add support for ID3v1 tags (currently only ID3v2 frames are processed)
 - [ ] Add optional verbose/quiet flag to CLI
 - [ ] Add `--dry-run` mode that prints what would change without saving
