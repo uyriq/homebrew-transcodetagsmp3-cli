@@ -82,8 +82,8 @@ brew install transcodetagsmp3
 Install Nautilus integration for the current user:
 
 ```bash
-transcodetagsmp3 install-nautilus --user
-nautilus -q
+transcodetagsmp3 install-nautilus --user # install extension
+nautilus -q # Quit and relaunch Files
 ```
 
 Optional system packages for GNOME Files integration:
