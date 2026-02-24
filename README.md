@@ -72,6 +72,28 @@ After installation, enable the service in one of these places:
 
 ---
 
+## Installation (Linux / Homebrew)
+
+```bash
+brew tap uyriq/transcodetagsmp3-cli
+brew install transcodetagsmp3
+```
+
+Install Nautilus integration for the current user:
+
+```bash
+transcodetagsmp3 install-nautilus --user
+nautilus -q
+```
+
+Optional system packages for GNOME Files integration:
+
+```bash
+sudo apt install -y python3-nautilus libnotify-bin
+```
+
+---
+
 ## Usage
 
 ### Finder (Quick Action)
@@ -98,29 +120,27 @@ python3 fix_mp3_tags.py track.mp3
 python3 fix_mp3_tags.py *.mp3
 ```
 
-### Linux CLI (Step 1 / WIP)
+### Linux CLI
 
 ```bash
-# Run fixer through the new CLI (default command)
-./transcodetagsmp3 track.mp3
+# Fix one or many files (default command)
+transcodetagsmp3 track.mp3
+transcodetagsmp3 *.mp3
 
 # Explicit form is also supported
-./transcodetagsmp3 fix track.mp3
-
-# Install Nautilus user extension (GNOME Files)
-./transcodetagsmp3 install-nautilus --user
+transcodetagsmp3 fix track.mp3
 ```
 
-Nautilus extension files are installed to user-local paths:
+### Linux Nautilus
+
+1. Open a folder with `.mp3` files in GNOME Files.
+2. Select one or multiple files.
+3. Right-click → **Fix MP3 Tags Encoding**.
+
+Installed integration paths:
 
 - `~/.local/share/nautilus-python/extensions/transcodetagsmp3_extension.py`
 - `~/.local/share/transcodetagsmp3/run_fix_mp3_tags.sh`
-
-After install, restart Files:
-
-```bash
-nautilus -q
-```
 
 ---
 

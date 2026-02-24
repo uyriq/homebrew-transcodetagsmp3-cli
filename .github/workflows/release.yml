@@ -103,7 +103,6 @@ jobs:
           - Package URL: \`${{ steps.meta.outputs.tarball_url }}\`
           - SHA256: \`${{ steps.meta.outputs.sha256 }}\`
 
-          Use this SHA for the top-level formula \`sha256\` in \`Formula/transcodetagsmp3.rb\`.
           EOF
 
       - name: Create or update GitHub release
