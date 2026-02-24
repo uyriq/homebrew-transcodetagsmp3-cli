@@ -36,10 +36,11 @@ jobs:
             exit 1
           fi
 
-          # Homebrew package source is the public repo tarball.
-          TARBALL_URL="https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${TAG}.tar.gz"
-          curl -fsSL -o source.tar.gz "$TARBALL_URL"
-          SHA256="$(sha256sum source.tar.gz | awk '{print $1}')"
+          # Homebrew package source is the minimal runtime asset from the public release.
+          ASSET_NAME="transcodetagsmp3-${TAG}.tar.gz"
+          TARBALL_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/${ASSET_NAME}"
+          curl -fsSL -o package.tar.gz "$TARBALL_URL"
+          SHA256="$(sha256sum package.tar.gz | awk '{print $1}')"
 
           {
             echo "tag=$TAG"

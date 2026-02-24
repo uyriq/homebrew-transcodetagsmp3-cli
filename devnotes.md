@@ -41,7 +41,7 @@ git push public v0.1.0
 
 ## Homebrew/Tap Relationship
 
-- `public` repo provides public source tarballs (`https://github.com/uyriq/homebrew-transcodetagsmp3-cli/archive/refs/tags/<tag>.tar.gz`).
+- `public` repo provides release package assets (`https://github.com/uyriq/homebrew-transcodetagsmp3-cli/releases/download/<tag>/transcodetagsmp3-<tag>.tar.gz`).
 - Homebrew tap uses the same public repo (`brew tap uyriq/transcodetagsmp3-cli`).
 - Tap formula path: `Formula/transcodetagsmp3.rb`.
 - Keep private-only files/secrets out of branches/tags pushed to `public`.

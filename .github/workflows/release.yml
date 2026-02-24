@@ -55,32 +55,49 @@ jobs:
             exit 1
           fi
 
-          # Homebrew must use the public repo tarball, not private source repo.
-          TARBALL_URL="https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${TAG}.tar.gz"
-          curl -fsSL -o source.tar.gz "$TARBALL_URL"
-          SHA256="$(sha256sum source.tar.gz | awk '{print $1}')"
+          # Build a minimal runtime package for Homebrew instead of using full source archive.
+          ASSET_NAME="transcodetagsmp3-${TAG}.tar.gz"
+          PKG_ROOT="transcodetagsmp3-${TAG}"
+          PKG_DIR="dist/${PKG_ROOT}"
+
+          mkdir -p "${PKG_DIR}/linux/nautilus"
+          install -m 0644 fix_mp3_tags.py "${PKG_DIR}/fix_mp3_tags.py"
+          install -m 0644 transcodetagsmp3_cli.py "${PKG_DIR}/transcodetagsmp3_cli.py"
+          install -m 0755 transcodetagsmp3 "${PKG_DIR}/transcodetagsmp3"
+          install -m 0644 linux/nautilus/transcodetagsmp3_extension.py.tmpl \
+            "${PKG_DIR}/linux/nautilus/transcodetagsmp3_extension.py.tmpl"
+
+          tar -C dist -czf "${ASSET_NAME}" "${PKG_ROOT}"
+          TARBALL_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/${ASSET_NAME}"
+          SHA256="$(sha256sum "${ASSET_NAME}" | awk '{print $1}')"
 
           {
             echo "tag=$TAG"
             echo "tarball_url=$TARBALL_URL"
             echo "sha256=$SHA256"
+            echo "asset_name=$ASSET_NAME"
           } >> "$GITHUB_OUTPUT"
 
           {
             echo "### Release Metadata"
             echo "- Public repo: https://github.com/${GITHUB_REPOSITORY}"
-            echo "- Tarball URL: \`$TARBALL_URL\`"
+            echo "- Minimal package URL: \`$TARBALL_URL\`"
             echo "- SHA256: \`$SHA256\`"
+            echo "- Included files:"
+            echo "  - \`fix_mp3_tags.py\`"
+            echo "  - \`transcodetagsmp3_cli.py\`"
+            echo "  - \`transcodetagsmp3\`"
+            echo "  - \`linux/nautilus/transcodetagsmp3_extension.py.tmpl\`"
             echo ""
-            echo "Private source repo remains separate and is not used for Homebrew tarballs."
+            echo "Private source repo remains separate and is not used for Homebrew packages."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Write release notes
         run: |
           cat > release-notes.md <<EOF
-          Homebrew release metadata for \`${{ steps.meta.outputs.tag }}\`.
+          Homebrew release metadata for \`${{ steps.meta.outputs.tag }}\` (minimal runtime package).
 
-          - Tarball URL: \`${{ steps.meta.outputs.tarball_url }}\`
+          - Package URL: \`${{ steps.meta.outputs.tarball_url }}\`
           - SHA256: \`${{ steps.meta.outputs.sha256 }}\`
 
           Use this SHA for the top-level formula \`sha256\` in \`Formula/transcodetagsmp3.rb\`.
@@ -94,6 +111,13 @@ jobs:
           else
             gh release create "$TAG" --repo "${GITHUB_REPOSITORY}" --title "$TAG" --notes-file release-notes.md
           fi
+
+      - name: Upload minimal package asset
+        run: |
+          gh release upload "${{ steps.meta.outputs.tag }}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            "${{ steps.meta.outputs.asset_name }}" \
+            --clobber
 
       - name: Upload release metadata artifact
         uses: actions/upload-artifact@v4

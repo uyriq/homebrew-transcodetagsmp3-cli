@@ -9,7 +9,7 @@ This folder contains a starter formula for the public source repo:
 
 1. Push a release tag to the public source repo.
 2. Download release tarball URL:
-   `https://github.com/uyriq/homebrew-transcodetagsmp3-cli/archive/refs/tags/<tag>.tar.gz`
+   `https://github.com/uyriq/homebrew-transcodetagsmp3-cli/releases/download/<tag>/transcodetagsmp3-<tag>.tar.gz`
 3. Compute SHA-256:
    `sha256sum transcodetagsmp3-cli-<tag>.tar.gz`
 4. Update formula fields:

@@ -1,3 +1,5 @@
+![Downloads](https://img.shields.io/github/downloads/uyriq/homebrew-transcodetagsmp3-cli/total)
+
 # transcodetagsmp3
 
 A macOS helper (Apple Silicon compatible) that fixes garbled MP3 ID3 tag
@@ -35,9 +37,9 @@ garbled_latin1_string.encode("latin-1").decode("cp1251")
 | File                         | Purpose                                                                                            |
 | ---------------------------- | -------------------------------------------------------------------------------------------------- |
 | `fix_mp3_tags.py`            | Core Python script — reads ID3 tags, detects mis-encoded frames, converts to UTF-8, saves          |
-| `transcodetagsmp3_cli.py`    | Linux/Homebrew-oriented CLI (`fix`, `install-nautilus --user`)                                    |
-| `transcodetagsmp3`           | Executable CLI wrapper                                                                              |
-| `linux/nautilus/`            | Nautilus extension template used by CLI installer                                                   |
+| `transcodetagsmp3_cli.py`    | Linux/Homebrew-oriented CLI (`fix`, `install-nautilus --user`)                                     |
+| `transcodetagsmp3`           | Executable CLI wrapper                                                                             |
+| `linux/nautilus/`            | Nautilus extension template used by CLI installer                                                  |
 | `requirements.txt`           | Python dependency (`mutagen`)                                                                      |
 | `install.sh`                 | One-shot installer: installs `mutagen`, copies the script, and installs the Automator Quick Action |
 | `TranscodeTagsMP3.workflow/` | Automator Quick Action that wires Finder → `fix_mp3_tags.py`                                       |
