@@ -9,7 +9,7 @@ class Transcodetagsmp3 < Formula
 
   resource "mutagen" do
     url "https://files.pythonhosted.org/packages/source/m/mutagen/mutagen-1.47.0.tar.gz"
-    sha256 "REPLACE_WITH_MUTAGEN_1_47_0_SHA256"
+    sha256 "719fadef0a978c31b4cf3c956261b3c58b6948b32023078a2117b1de09f0fc99"
   end
 
   def install
