@@ -35,6 +35,9 @@ garbled_latin1_string.encode("latin-1").decode("cp1251")
 | File                         | Purpose                                                                                            |
 | ---------------------------- | -------------------------------------------------------------------------------------------------- |
 | `fix_mp3_tags.py`            | Core Python script — reads ID3 tags, detects mis-encoded frames, converts to UTF-8, saves          |
+| `transcodetagsmp3_cli.py`    | Linux/Homebrew-oriented CLI (`fix`, `install-nautilus --user`)                                    |
+| `transcodetagsmp3`           | Executable CLI wrapper                                                                              |
+| `linux/nautilus/`            | Nautilus extension template used by CLI installer                                                   |
 | `requirements.txt`           | Python dependency (`mutagen`)                                                                      |
 | `install.sh`                 | One-shot installer: installs `mutagen`, copies the script, and installs the Automator Quick Action |
 | `TranscodeTagsMP3.workflow/` | Automator Quick Action that wires Finder → `fix_mp3_tags.py`                                       |
@@ -91,6 +94,30 @@ python3 fix_mp3_tags.py track.mp3
 
 # Fix multiple files at once
 python3 fix_mp3_tags.py *.mp3
+```
+
+### Linux CLI (Step 1 / WIP)
+
+```bash
+# Run fixer through the new CLI (default command)
+./transcodetagsmp3 track.mp3
+
+# Explicit form is also supported
+./transcodetagsmp3 fix track.mp3
+
+# Install Nautilus user extension (GNOME Files)
+./transcodetagsmp3 install-nautilus --user
+```
+
+Nautilus extension files are installed to user-local paths:
+
+- `~/.local/share/nautilus-python/extensions/transcodetagsmp3_extension.py`
+- `~/.local/share/transcodetagsmp3/run_fix_mp3_tags.sh`
+
+After install, restart Files:
+
+```bash
+nautilus -q
 ```
 
 ---

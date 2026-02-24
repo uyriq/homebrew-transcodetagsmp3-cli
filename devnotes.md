@@ -3,7 +3,7 @@
 ## Repository Setup
 
 - Private development repo (`origin`): `git@github.com:uyriq/transcodetagsmp3.git`
-- Public distribution repo (`public`): `git@github.com:uyriq/transcodetagsmp3-cli.git`
+- Public distribution repo (`public`): `git@github.com:uyriq/homebrew-transcodetagsmp3-cli.git`
 
 Current local remotes:
 
@@ -16,8 +16,8 @@ Expected:
 ```text
 origin  git@github.com:uyriq/transcodetagsmp3.git (fetch)
 origin  git@github.com:uyriq/transcodetagsmp3.git (push)
-public  git@github.com:uyriq/transcodetagsmp3-cli.git (fetch)
-public  git@github.com:uyriq/transcodetagsmp3-cli.git (push)
+public  git@github.com:uyriq/homebrew-transcodetagsmp3-cli.git (fetch)
+public  git@github.com:uyriq/homebrew-transcodetagsmp3-cli.git (push)
 ```
 
 ## Sync Workflow
@@ -41,6 +41,7 @@ git push public v0.1.0
 
 ## Homebrew/Tap Relationship
 
-- `public` repo provides public source tarballs (`https://github.com/uyriq/transcodetagsmp3-cli/archive/refs/tags/<tag>.tar.gz`).
-- Homebrew tap repo (`uyriq/homebrew-tap`) formula points to that public tarball URL and its `sha256`.
+- `public` repo provides public source tarballs (`https://github.com/uyriq/homebrew-transcodetagsmp3-cli/archive/refs/tags/<tag>.tar.gz`).
+- Homebrew tap uses the same public repo (`brew tap uyriq/transcodetagsmp3-cli`).
+- Tap formula path: `Formula/transcodetagsmp3.rb`.
 - Keep private-only files/secrets out of branches/tags pushed to `public`.
