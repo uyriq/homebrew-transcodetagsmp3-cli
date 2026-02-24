@@ -16,11 +16,10 @@ class Transcodetagsmp3 < Formula
     app = libexec/"app"
     app.install "fix_mp3_tags.py"
     app.install "transcodetagsmp3_cli.py"
-    app.install "transcodetagsmp3"
     (app/"linux").mkpath
     (app/"linux/nautilus").install "linux/nautilus/transcodetagsmp3_extension.py.tmpl"
 
-    py = Formula["python@3.12"].opt_bin/"python3"
+    py = Formula["python@3.12"].opt_bin/"python3.12"
 
     # Install mutagen into a private vendor path from a pinned Homebrew resource.
     vendor = libexec/"vendor"
@@ -29,9 +28,11 @@ class Transcodetagsmp3 < Formula
       system py, "-m", "pip", "install", "--no-deps", "--target", vendor, "."
     end
 
-    # Ensure CLI imports local modules and vendored dependencies.
-    (bin/"transcodetagsmp3").write_env_script app/"transcodetagsmp3",
-                                              PYTHONPATH: "#{app}:#{vendor}"
+    (bin/"transcodetagsmp3").write <<~EOS
+      #!/bin/bash
+      export PYTHONPATH="#{app}:#{vendor}"
+      exec "#{py}" "#{app}/transcodetagsmp3_cli.py" "$@"
+    EOS
   end
 
   test do
