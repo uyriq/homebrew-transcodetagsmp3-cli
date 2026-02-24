@@ -24,5 +24,5 @@ Track progress for Ubuntu 22.04 / Nautilus 42.6 implementation.
 
 - [x] Add release-oriented install docs for Linux/Homebrew usage.
 - [x] Add starter Homebrew formula template in-repo (`packaging/homebrew/transcodetagsmp3.rb`).
-- [ ] Publish final formula to `uyriq/homebrew-tap` pointing to public tag tarballs.
+- [ ] Publish final formula to `uyriq/homebrew-transcodetagsmp3-cli` pointing to public tag tarballs.
 - [ ] Validate fresh-install path on Ubuntu 22.04 + Nautilus 42.6.
