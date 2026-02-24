@@ -1,3 +1,5 @@
+![Downloads](https://img.shields.io/github/downloads/uyriq/homebrew-transcodetagsmp3-cli/total)
+
 # transcodetagsmp3
 
 A macOS helper (Apple Silicon compatible) that fixes garbled MP3 ID3 tag
@@ -32,16 +34,19 @@ garbled_latin1_string.encode("latin-1").decode("cp1251")
 
 ## Files
 
-| File                         | Purpose                                                                                                 |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `fix_mp3_tags.py`            | Core Python script — reads ID3 tags, detects mis-encoded frames, converts to UTF-8, saves               |
-| `run_fix_mp3_tags.sh`        | Wrapper script with logging — called by Automator workflow to handle redirection                        |
-| `requirements.txt`           | Python dependency (`mutagen`)                                                                           |
+| File                         | Purpose                                                                                            |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `fix_mp3_tags.py`            | Core Python script — reads ID3 tags, detects mis-encoded frames, converts to UTF-8, saves          |
+| `run_fix_mp3_tags.sh`        | Wrapper script with logging — called by Automator workflow to handle redirection                   |
+| `transcodetagsmp3_cli.py`    | Linux/Homebrew-oriented CLI (`fix`, `install-nautilus --user`)                                     |
+| `transcodetagsmp3`           | Executable CLI wrapper                                                                             |
+| `linux/nautilus/`            | Nautilus extension template used by CLI installer                                                  |
+| `requirements.txt`           | Python dependency (`mutagen`)                                                                      |
 | `install.sh`                 | One-shot installer: installs `mutagen`, copies scripts and wrapper, installs the Automator Quick Action |
-| `diagnose.sh`                | Diagnostic script: checks installation, identifies problems                                             |
-| `cleanup.sh`                 | Complete cleanup: removes all components and caches before reinstalling                                 |
-| `TranscodeTagsMP3.workflow/` | Automator Quick Action that wires Finder → wrapper script → Python script                               |
-| `tests/`                     | `pytest` unit and integration tests                                                                     |
+| `diagnose.sh`                | Diagnostic script: checks installation, identifies problems                                         |
+| `cleanup.sh`                 | Complete cleanup: removes all components and caches before reinstalling                             |
+| `TranscodeTagsMP3.workflow/` | Automator Quick Action that wires Finder → wrapper script → Python script                          |
+| `tests/`                     | `pytest` unit and integration tests                                                                |
 
 ---
 
@@ -67,6 +72,28 @@ After installation, enable the Quick Action in:
 
 - **System Settings → Privacy & Security → Extensions → Finder**
   (Enable the checkbox next to **Fix MP3 Tags Encoding**)
+
+---
+
+## Installation (Linux / Homebrew)
+
+```bash
+brew tap uyriq/transcodetagsmp3-cli
+brew install transcodetagsmp3
+```
+
+Install Nautilus integration for the current user:
+
+```bash
+transcodetagsmp3 install-nautilus --user # install extension
+nautilus -q # Quit and relaunch Files
+```
+
+Optional system packages for GNOME Files integration:
+
+```bash
+sudo apt install -y python3-nautilus libnotify-bin
+```
 
 ---
 
@@ -224,6 +251,28 @@ python3 fix_mp3_tags.py track.mp3
 # Fix multiple files at once
 python3 fix_mp3_tags.py *.mp3
 ```
+
+### Linux CLI
+
+```bash
+# Fix one or many files (default command)
+transcodetagsmp3 track.mp3
+transcodetagsmp3 *.mp3
+
+# Explicit form is also supported
+transcodetagsmp3 fix track.mp3
+```
+
+### Linux Nautilus
+
+1. Open a folder with `.mp3` files in GNOME Files.
+2. Select one or multiple files.
+3. Right-click → **Fix MP3 Tags Encoding**.
+
+Installed integration paths:
+
+- `~/.local/share/nautilus-python/extensions/transcodetagsmp3_extension.py`
+- `~/.local/share/transcodetagsmp3/run_fix_mp3_tags.sh`
 
 ---
 

@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""Nautilus menu integration for TranscodeTagsMP3."""
+
+import subprocess
+from urllib.parse import unquote, urlparse
+
+from gi.repository import GObject, Nautilus
+
+RUNNER_PATH = __RUNNER_PATH_REPR__
+
+
+class TranscodeTagsMP3Extension(GObject.GObject, Nautilus.MenuProvider):
+    def get_file_items(self, *args):
+        files = args[-1] if args else []
+        mp3_paths = []
+        for file_info in files:
+            uri = file_info.get_uri()
+            parsed = urlparse(uri)
+            if parsed.scheme != "file":
+                continue
+            path = unquote(parsed.path)
+            if path.lower().endswith(".mp3"):
+                mp3_paths.append(path)
+
+        if not mp3_paths:
+            return
+
+        item = Nautilus.MenuItem(
+            name="TranscodeTagsMP3::FixTags",
+            label="Fix MP3 Tags Encoding",
+            tip="Convert broken CP1251/Latin-1 ID3 tags to UTF-8",
+        )
+        item.connect("activate", self._on_activate, mp3_paths)
+        return (item,)
+
+    def _on_activate(self, _menu, paths):
+        subprocess.Popen([RUNNER_PATH, *paths], start_new_session=True)
