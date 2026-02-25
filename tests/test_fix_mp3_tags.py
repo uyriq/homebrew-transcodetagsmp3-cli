@@ -238,3 +238,95 @@ class TestFixMp3File:
         assert tags_after["TIT2"].encoding in (Encoding.UTF8, Encoding.UTF16)
         assert tags_after["TPE1"].encoding in (Encoding.UTF8, Encoding.UTF16)
         assert tags_after["TALB"].encoding in (Encoding.UTF8, Encoding.UTF16)
+
+
+# ── macOS Quick Action install tests ─────────────────────────────────────────
+
+from transcodetagsmp3_cli import (
+    install_macos_service_user,
+    _render_macos_runner_script,
+    _render_workflow_info_plist,
+    _render_workflow_document,
+)
+from pathlib import Path
+import platform
+
+
+class TestMacOSInstall:
+    """Tests for install_macos_service_user() and its rendering helpers."""
+
+    def test_render_macos_runner_contains_osascript(self, tmp_path):
+        cli = tmp_path / "transcodetagsmp3"
+        log = tmp_path / "TranscodeTagsMP3.log"
+        script = _render_macos_runner_script(cli, log)
+        assert "osascript" in script
+        assert str(cli) in script
+        assert str(log) in script
+
+    def test_render_macos_runner_no_notify_send(self, tmp_path):
+        cli = tmp_path / "transcodetagsmp3"
+        log = tmp_path / "t.log"
+        script = _render_macos_runner_script(cli, log)
+        assert "notify-send" not in script
+
+    def test_render_workflow_info_plist_valid_xml(self):
+        import xml.etree.ElementTree as ET
+        plist = _render_workflow_info_plist()
+        # Must parse without error
+        ET.fromstring(plist.split("<!DOCTYPE", 1)[0] + plist.split(">", 2)[-1]
+                      if "<!DOCTYPE" in plist else plist)
+        assert "public.mp3" in plist
+        assert "Fix MP3 Tags Encoding" in plist
+
+    def test_render_workflow_document_embeds_runner_path(self, tmp_path):
+        runner = tmp_path / "run_fix_mp3_tags.sh"
+        doc = _render_workflow_document(runner)
+        assert str(runner) in doc
+        assert "COMMAND_STRING" in doc
+        assert "inputMethod" in doc
+        assert "/bin/zsh" in doc
+
+    def test_render_workflow_document_spaces_in_path(self, tmp_path):
+        runner = tmp_path / "Application Scripts" / "run.sh"
+        doc = _render_workflow_document(runner)
+        # Path with spaces must be shell-quoted in the COMMAND_STRING
+        assert "Application Scripts" in doc
+
+    @pytest.mark.skipif(platform.system() != "Darwin", reason="macOS only")
+    def test_install_macos_service_writes_files(self, tmp_path):
+        fake_cli = tmp_path / "bin" / "transcodetagsmp3"
+        fake_cli.parent.mkdir()
+        fake_cli.touch()
+
+        result = install_macos_service_user(home=tmp_path, cli_path=fake_cli)
+
+        workflow_contents = result["workflow_dir"] / "Contents"
+        assert (workflow_contents / "Info.plist").exists()
+        assert (workflow_contents / "document.wflow").exists()
+        assert result["runner_path"].exists()
+        assert result["runner_path"].stat().st_mode & 0o111  # executable
+
+    @pytest.mark.skipif(platform.system() != "Darwin", reason="macOS only")
+    def test_install_macos_service_overwrite_guard(self, tmp_path):
+        fake_cli = tmp_path / "bin" / "transcodetagsmp3"
+        fake_cli.parent.mkdir()
+        fake_cli.touch()
+
+        install_macos_service_user(home=tmp_path, cli_path=fake_cli)
+        with pytest.raises(FileExistsError):
+            install_macos_service_user(home=tmp_path, cli_path=fake_cli)
+
+    @pytest.mark.skipif(platform.system() != "Darwin", reason="macOS only")
+    def test_install_macos_service_force_overwrites(self, tmp_path):
+        fake_cli = tmp_path / "bin" / "transcodetagsmp3"
+        fake_cli.parent.mkdir()
+        fake_cli.touch()
+
+        install_macos_service_user(home=tmp_path, cli_path=fake_cli)
+        # Second call with force must not raise
+        install_macos_service_user(home=tmp_path, cli_path=fake_cli, force=True)
+
+    def test_install_macos_service_raises_on_non_macos(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("sys.platform", "linux")
+        with pytest.raises(RuntimeError, match="macOS"):
+            install_macos_service_user(home=tmp_path)

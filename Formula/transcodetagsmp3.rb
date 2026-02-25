@@ -7,6 +7,10 @@ class Transcodetagsmp3 < Formula
 
   depends_on "python@3.12"
 
+  on_macos do
+    depends_on :macos => :monterey
+  end
+
   resource "mutagen" do
     url "https://files.pythonhosted.org/packages/source/m/mutagen/mutagen-1.47.0.tar.gz"
     sha256 "719fadef0a978c31b4cf3c956261b3c58b6948b32023078a2117b1de09f0fc99"
@@ -33,6 +37,12 @@ class Transcodetagsmp3 < Formula
       export PYTHONPATH="#{app}:#{vendor}"
       exec "#{py}" "#{app}/transcodetagsmp3_cli.py" "$@"
     EOS
+  end
+
+  def post_install
+    return unless OS.mac?
+
+    system bin/"transcodetagsmp3", "install-macos-service", "--user", "--force"
   end
 
   test do
