@@ -62,3 +62,12 @@ Two separate repos involved in every release:
 5. `release.yml` (public repo CI) builds tarball → uploads to public GitHub release
 6. `update-tap.yml` (public repo CI) updates formula URL/SHA → commits to public main
 7. `brew upgrade transcodetagsmp3` picks up the new formula automatically
+
+**Note:** `update-tap.yml` requires manual dispatch (`gh workflow run update-tap.yml --repo uyriq/homebrew-transcodetagsmp3-cli -f tag=vX.Y.Z`) because GitHub Actions cannot trigger `release:` events from within workflows using `GITHUB_TOKEN`.
+
+## Release history
+
+| Version | Date | Changes |
+|---------|------|---------|
+| v0.2.0 | 2026-02-25 | macOS Homebrew support — `install-macos-service` subcommand, Automator workflow generation, `post_install` hook |
+| v0.2.1 | 2026-02-25 | `--version` / `-V` flag — shows Homebrew tap git hash or git-describe in dev |

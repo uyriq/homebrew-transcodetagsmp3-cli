@@ -55,7 +55,17 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
 - [x] Update `packaging/homebrew/transcodetagsmp3.rb` template with same changes
 - [x] Add tests for `install_macos_service_user()` (plist content, runner script, overwrite guard, platform guard)
 - [x] Update `README.md` with brew-based macOS install path
-- [ ] Bump version, publish new release tarball, update sha256 in both formula files
+- [x] Bump version, publish new release tarball, update sha256 in both formula files
+  - v0.2.0 released (macOS brew support); v0.2.1 released (--version / -V flag)
+  - `--version` / `-V` shows `vX.Y.Z (tap@HASH)` when installed via Homebrew, or `vX.Y.Z-N-gHASH` from git
+
+## Version info
+
+- [x] Add `--version` / `-V` flag to CLI (`transcodetagsmp3 --version`)
+  - Priority chain: Homebrew `INSTALL_RECEIPT.json` → `git describe` → fallback constant
+  - Homebrew output: `transcodetagsmp3 v0.2.1 (tap@<tap_git_head[:8]>)`
+  - Dev output: `transcodetagsmp3 v0.2.1-N-g<hash>`
+  - Released as v0.2.1 in public tap
 
 ## Future / ideas
 
