@@ -67,6 +67,19 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
   - Dev output: `transcodetagsmp3 v0.2.1-N-g<hash>`
   - Released as v0.2.1 in public tap
 
+## macOS clean-env integration test
+
+- [ ] `macos-env-test` — Real-device brew install validation:
+  1. Run `cleanup.sh` to remove existing Automator workflow and scripts
+  2. `brew uninstall transcodetagsmp3 && brew untap uyriq/transcodetagsmp3-cli` (if already installed)
+  3. `brew tap uyriq/transcodetagsmp3-cli && brew install transcodetagsmp3`
+  4. Verify Quick Action appears in Finder right-click on `.mp3` file
+  5. Test with a garbled-tag MP3 file; confirm tags are fixed
+  6. Confirm `osascript` desktop notification fires
+  7. Check `~/Library/Logs/TranscodeTagsMP3.log` for correct entries
+  8. Verify `~/Library/Services/TranscodeTagsMP3.workflow/Contents/` has `Info.plist` + `document.wflow`
+  9. Check `transcodetagsmp3 --version` shows `vX.Y.Z (tap@HASH)`
+
 ## Future / ideas
 
 - [ ] Improve mutagen installation method — explore alternatives to `--break-system-packages` (venv, pipx, etc.)
