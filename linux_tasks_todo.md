@@ -46,3 +46,19 @@ Track progress for Ubuntu 22.04 / Nautilus 42.6 implementation.
 - [ ] Add CI check that formula contains no placeholder hashes and uses release-asset URL pattern.
 - [ ] Add explicit upgrade/uninstall/troubleshooting section for Linux users in README.
 - [ ] Add a release checklist section for maintainers (tag, workflow run, verification commands).
+
+## Release process (v0.2.0+) — Architecture note
+
+Two separate repos involved in every release:
+
+- **Private dev repo** (`uyriq/transcodetagsmp3`): all development and feature branches
+- **Public tap repo** (`uyriq/homebrew-transcodetagsmp3-cli`): Homebrew tap, release assets, and live formula
+
+**Steps to release a new version:**
+1. Merge feature branch PR in private dev repo
+2. `git remote add public https://github.com/uyriq/homebrew-transcodetagsmp3-cli.git` (if not already added)
+3. `git push public main` — push merged main to public repo
+4. `git tag vX.Y.Z && git push public vX.Y.Z` — tag on public repo triggers CI
+5. `release.yml` (public repo CI) builds tarball → uploads to public GitHub release
+6. `update-tap.yml` (public repo CI) updates formula URL/SHA → commits to public main
+7. `brew upgrade transcodetagsmp3` picks up the new formula automatically
