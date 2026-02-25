@@ -45,12 +45,22 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
 - [x] `README.md` — encoding problem explanation, installation, usage, file table
 - [x] `tasks_todo.md` — this file
 
+## macOS Homebrew integration
+
+- [x] Add `_render_macos_runner_script(cli_path, log_path)` — bash runner using `osascript` for notifications
+- [x] Add `_render_workflow_info_plist()` and `_render_workflow_document(runner_path)` — generate Automator `.workflow` XML dynamically from Python (no binary blob in tarball)
+- [x] Add `install_macos_service_user(*, force, home, cli_path)` — writes `~/Library/Services/TranscodeTagsMP3.workflow/` and runner script; runs `pbs -flush` + restarts Finder; guards on `sys.platform == "darwin"`
+- [x] Wire `install-macos-service --user [--force]` subcommand into `main()` and `_build_parser()`
+- [x] Update `Formula/transcodetagsmp3.rb` — add `on_macos { depends_on :macos => :monterey }` and `def post_install` hook
+- [x] Update `packaging/homebrew/transcodetagsmp3.rb` template with same changes
+- [x] Add tests for `install_macos_service_user()` (plist content, runner script, overwrite guard, platform guard)
+- [x] Update `README.md` with brew-based macOS install path
+- [ ] Bump version, publish new release tarball, update sha256 in both formula files
+
 ## Future / ideas
 
 - [ ] Improve mutagen installation method — explore alternatives to `--break-system-packages` (venv, pipx, etc.)
 - [ ] Add support for ID3v1 tags (currently only ID3v2 frames are processed)
 - [ ] Add optional verbose/quiet flag to CLI
 - [ ] Add `--dry-run` mode that prints what would change without saving
-- [ ] Add macOS Notification Center notification on completion
-- [ ] Distribute as a standalone macOS `.pkg` installer
 - [ ] Support additional Cyrillic encodings (KOI8-R, ISO 8859-5) via auto-detection
