@@ -9,6 +9,8 @@ Run with:
 
 import hashlib
 import os
+import platform
+import plistlib
 import sys
 
 import pytest
@@ -18,6 +20,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fix_mp3_tags import fix_encoding, fix_mp3_file
 from mutagen.id3 import ID3, TIT2, TPE1, TALB, Encoding
+from transcodetagsmp3_cli import (
+    install_macos_service_user,
+    _render_macos_runner_script,
+    _render_workflow_info_plist,
+    _render_workflow_document,
+)
 
 
 # ── Minimal valid MPEG1/Layer3 frame (for creating test MP3 files) ────────────
@@ -242,15 +250,6 @@ class TestFixMp3File:
 
 # ── macOS Quick Action install tests ─────────────────────────────────────────
 
-from transcodetagsmp3_cli import (
-    install_macos_service_user,
-    _render_macos_runner_script,
-    _render_workflow_info_plist,
-    _render_workflow_document,
-)
-from pathlib import Path
-import platform
-
 
 class TestMacOSInstall:
     """Tests for install_macos_service_user() and its rendering helpers."""
@@ -270,11 +269,9 @@ class TestMacOSInstall:
         assert "notify-send" not in script
 
     def test_render_workflow_info_plist_valid_xml(self):
-        import xml.etree.ElementTree as ET
         plist = _render_workflow_info_plist()
-        # Must parse without error
-        ET.fromstring(plist.split("<!DOCTYPE", 1)[0] + plist.split(">", 2)[-1]
-                      if "<!DOCTYPE" in plist else plist)
+        # Must parse as a valid plist without error
+        plistlib.loads(plist.encode("utf-8"))
         assert "public.mp3" in plist
         assert "Fix MP3 Tags Encoding" in plist
 

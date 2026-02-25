@@ -47,14 +47,14 @@ Agents and contributors should mark tasks `[x]` when completed and add new tasks
 
 ## macOS Homebrew integration
 
-- [ ] Add `_render_macos_runner_script(cli_path, log_path)` — bash runner using `osascript` for notifications
-- [ ] Add `_render_workflow_info_plist()` and `_render_workflow_document(runner_path)` — generate Automator `.workflow` XML dynamically from Python (no binary blob in tarball)
-- [ ] Add `install_macos_service_user(*, force, home, cli_path)` — writes `~/Library/Services/TranscodeTagsMP3.workflow/` and runner script; runs `pbs -flush` + restarts Finder; guards on `sys.platform == "darwin"`
-- [ ] Wire `install-macos-service --user [--force]` subcommand into `main()` and `_build_parser()`
-- [ ] Update `Formula/transcodetagsmp3.rb` — add `on_macos { depends_on :macos => :monterey }` and `def post_install` hook
-- [ ] Update `packaging/homebrew/transcodetagsmp3.rb` template with same changes
-- [ ] Add tests for `install_macos_service_user()` (plist content, runner script, overwrite guard, platform guard)
-- [ ] Update `README.md` with brew-based macOS install path
+- [x] Add `_render_macos_runner_script(cli_path, log_path)` — bash runner using `osascript` for notifications
+- [x] Add `_render_workflow_info_plist()` and `_render_workflow_document(runner_path)` — generate Automator `.workflow` XML dynamically from Python (no binary blob in tarball)
+- [x] Add `install_macos_service_user(*, force, home, cli_path)` — writes `~/Library/Services/TranscodeTagsMP3.workflow/` and runner script; runs `pbs -flush` + restarts Finder; guards on `sys.platform == "darwin"`
+- [x] Wire `install-macos-service --user [--force]` subcommand into `main()` and `_build_parser()`
+- [x] Update `Formula/transcodetagsmp3.rb` — add `on_macos { depends_on :macos => :monterey }` and `def post_install` hook
+- [x] Update `packaging/homebrew/transcodetagsmp3.rb` template with same changes
+- [x] Add tests for `install_macos_service_user()` (plist content, runner script, overwrite guard, platform guard)
+- [x] Update `README.md` with brew-based macOS install path
 - [ ] Bump version, publish new release tarball, update sha256 in both formula files
 
 ## Future / ideas

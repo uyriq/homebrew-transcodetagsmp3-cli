@@ -59,10 +59,12 @@ brew tap uyriq/transcodetagsmp3-cli
 brew install transcodetagsmp3
 ```
 
-`brew install` automatically installs the Finder Quick Action and runner script via `post_install`. To reinstall manually (e.g. after `brew upgrade`):
+`brew install` (and `brew upgrade`) automatically installs or updates the Finder Quick Action and runner script via Homebrew's `post_install` hook, so you normally do **not** need to reinstall anything manually.
+
+If the Quick Action is missing, broken, or you want to force a reinstall (for example, after troubleshooting an upgrade), run:
 
 ```bash
-transcodetagsmp3 install-macos-service --user [--force]
+transcodetagsmp3 install-macos-service --user --force
 ```
 
 ### Enable the Quick Action in Finder

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import getpass
 import html
 import os
 import shlex
@@ -417,7 +418,7 @@ def install_macos_service_user(
         ["/System/Library/CoreServices/pbs", "-flush"], check=False, capture_output=True
     )
     subprocess.run(
-        ["killall", "-u", os.environ.get("USER", os.getlogin()), "cfprefsd"],
+        ["killall", "-u", os.environ.get("USER", getpass.getuser()), "cfprefsd"],
         check=False, capture_output=True,
     )
     subprocess.run(["killall", "automator.runner"], check=False, capture_output=True)
@@ -575,7 +576,7 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
 
         try:
             result = install_macos_service_user(force=install_args.force)
-        except RuntimeError as exc:
+        except (RuntimeError, FileExistsError) as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 1
 

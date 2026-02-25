@@ -42,7 +42,7 @@ class Transcodetagsmp3 < Formula
   def post_install
     return unless OS.mac?
 
-    system bin/"transcodetagsmp3", "install-macos-service", "--user", "--force"
+    system! bin/"transcodetagsmp3", "install-macos-service", "--user", "--force"
   end
 
   test do
