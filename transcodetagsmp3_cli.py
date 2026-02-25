@@ -22,16 +22,48 @@ _FALLBACK_VERSION = "v0.2.0"
 
 
 def _get_version() -> str:
-    """Return 'tag-N-gHASH' from git, or fallback version string."""
+    """Return version string.
+
+    Priority:
+    1. Homebrew INSTALL_RECEIPT.json  →  'vX.Y.Z (tap@abcd1234)'
+    2. git describe                   →  'vX.Y.Z-N-gHASH'
+    3. _FALLBACK_VERSION
+    """
+    import json
+
+    # 1. Homebrew Cellar detection: .../Cellar/<name>/<version>/...
+    script_path = Path(__file__).resolve()
+    for parent in script_path.parents:
+        if parent.parent.name == "Cellar" and parent.parent.parent.name in (
+            "homebrew",
+            "Cellar",
+        ):
+            break
+        receipt = parent / "INSTALL_RECEIPT.json"
+        if receipt.exists():
+            try:
+                data = json.loads(receipt.read_text())
+                version = data.get("source", {}).get("versions", {}).get("stable") or parent.name
+                tap_head = data.get("source", {}).get("tap_git_head") or ""
+                hash_suffix = f" (tap@{tap_head[:8]})" if tap_head else ""
+                return f"v{version}{hash_suffix}"
+            except Exception:
+                break
+
+    # 2. git describe
     try:
         out = subprocess.check_output(
             ["git", "describe", "--tags", "--long", "--always"],
             stderr=subprocess.DEVNULL,
-            cwd=Path(__file__).resolve().parent,
+            cwd=script_path.parent,
         )
         return out.decode().strip()
     except Exception:
-        return _FALLBACK_VERSION
+        pass
+
+    return _FALLBACK_VERSION
+
+
 EXTENSION_FILENAME = "transcodetagsmp3_extension.py"
 TEMPLATE_PATH = (
     Path(__file__).resolve().parent
