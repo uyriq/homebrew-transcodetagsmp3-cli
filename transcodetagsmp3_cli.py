@@ -18,6 +18,20 @@ from typing import Dict, Iterable, Optional
 from fix_mp3_tags import fix_mp3_file
 
 APP_NAME = "transcodetagsmp3"
+_FALLBACK_VERSION = "v0.2.0"
+
+
+def _get_version() -> str:
+    """Return 'tag-N-gHASH' from git, or fallback version string."""
+    try:
+        out = subprocess.check_output(
+            ["git", "describe", "--tags", "--long", "--always"],
+            stderr=subprocess.DEVNULL,
+            cwd=Path(__file__).resolve().parent,
+        )
+        return out.decode().strip()
+    except Exception:
+        return _FALLBACK_VERSION
 EXTENSION_FILENAME = "transcodetagsmp3_extension.py"
 TEMPLATE_PATH = (
     Path(__file__).resolve().parent
@@ -498,7 +512,8 @@ def _build_parser() -> argparse.ArgumentParser:
         usage=(
             f"{APP_NAME} [fix] <file1.mp3> [file2.mp3 ...]\n"
             f"       {APP_NAME} install-nautilus --user [--force]\n"
-            f"       {APP_NAME} install-macos-service --user [--force]"
+            f"       {APP_NAME} install-macos-service --user [--force]\n"
+            f"       {APP_NAME} --version"
         ),
         description=(
             "Fix MP3 tags by default when file paths are passed. "
@@ -555,6 +570,10 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
 
     if argv_list[0] in ("-h", "--help"):
         parser.print_help()
+        return 0
+
+    if argv_list[0] in ("-V", "--version"):
+        print(f"{APP_NAME} {_get_version()}")
         return 0
 
     if argv_list[0] == "install-nautilus":
