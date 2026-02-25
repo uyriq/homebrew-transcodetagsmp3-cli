@@ -52,6 +52,28 @@ garbled_latin1_string.encode("latin-1").decode("cp1251")
 
 ## Installation (macOS)
 
+### Via Homebrew (recommended)
+
+```bash
+brew tap uyriq/transcodetagsmp3-cli
+brew install transcodetagsmp3
+```
+
+`brew install` automatically installs the Finder Quick Action and runner script via `post_install`. To reinstall manually (e.g. after `brew upgrade`):
+
+```bash
+transcodetagsmp3 install-macos-service --user [--force]
+```
+
+### Enable the Quick Action in Finder
+
+After installation, enable the Quick Action in:
+
+- **System Settings → Privacy & Security → Extensions → Finder**
+  (Enable the checkbox next to **Fix MP3 Tags Encoding**)
+
+### Via install.sh (alternative)
+
 ```bash
 git clone https://github.com/uyriq/transcodetagsmp3.git
 cd transcodetagsmp3
@@ -85,8 +107,8 @@ brew install transcodetagsmp3
 Install Nautilus integration for the current user:
 
 ```bash
-transcodetagsmp3 install-nautilus --user # install extension
-nautilus -q # Quit and relaunch Files
+transcodetagsmp3 install-nautilus --user  # install Nautilus extension
+nautilus -q                               # quit and relaunch Files
 ```
 
 Optional system packages for GNOME Files integration:
