@@ -42,7 +42,9 @@ class Transcodetagsmp3 < Formula
   def post_install
     return unless OS.mac?
 
-    system! bin/"transcodetagsmp3", "install-macos-service", "--user", "--force"
+    unless quiet_system bin/"transcodetagsmp3", "install-macos-service", "--user", "--force"
+      opoo "Finder Quick Action was not auto-installed. Run: transcodetagsmp3 install-macos-service --user --force"
+    end
   end
 
   test do

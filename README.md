@@ -212,7 +212,7 @@ If automatic installation fails or you want to create the workflow manually in A
 
 5. **Configure the shell script action:**
    - **Shell:** `/bin/zsh`
-   - **Pass input:** `to stdin` (this is critical - NOT "as arguments")
+   - **Pass input:** `as arguments`
    - **Script content:** Replace the default `cat` with:
      ```bash
      /bin/zsh ~/Library/Application\ Scripts/TranscodeTagsMP3/run_fix_mp3_tags.sh "$@"
@@ -225,7 +225,7 @@ If automatic installation fails or you want to create the workflow manually in A
 
 7. **Verify the configuration:**
    - The script box should show the full command with the wrapper script path
-   - "Pass input" should be set to `to stdin`
+   - "Pass input" should be set to `as arguments`
    - Shell should be `/bin/zsh`
 
 8. **Test the workflow:**
@@ -234,8 +234,8 @@ If automatic installation fails or you want to create the workflow manually in A
    - Check the log: `cat ~/Library/Logs/TranscodeTagsMP3.log`
 
 **Important Notes:**
-- The `"$@"` in the command is used by the wrapper script, not by the Automator action itself
-- Using "to stdin" (inputMethod=0) is the correct configuration for this workflow
+- The `"$@"` in the command is required so selected files are forwarded to the wrapper script
+- Using "as arguments" (inputMethod=1) is the preferred configuration for this workflow
 - The path uses backslash to escape the space in "Application Scripts"
 - After manual creation, you may need to enable the service in System Settings → Privacy & Security → Extensions
 

@@ -261,6 +261,8 @@ class TestMacOSInstall:
         assert "osascript" in script
         assert str(cli) in script
         assert str(log) in script
+        assert 'ARGS=("$@")' in script
+        assert 'read -r line' in script
 
     def test_render_macos_runner_no_notify_send(self, tmp_path):
         cli = tmp_path / "transcodetagsmp3"
@@ -281,6 +283,7 @@ class TestMacOSInstall:
         assert str(runner) in doc
         assert "COMMAND_STRING" in doc
         assert "inputMethod" in doc
+        assert "<integer>1</integer>" in doc
         assert "/bin/zsh" in doc
 
     def test_render_workflow_document_spaces_in_path(self, tmp_path):
@@ -327,3 +330,13 @@ class TestMacOSInstall:
         monkeypatch.setattr("sys.platform", "linux")
         with pytest.raises(RuntimeError, match="macOS"):
             install_macos_service_user(home=tmp_path)
+
+    def test_install_macos_service_permission_error_is_clean(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("sys.platform", "darwin")
+
+        def _raise_permission(*args, **kwargs):
+            raise PermissionError("denied")
+
+        monkeypatch.setattr("pathlib.Path.write_text", _raise_permission)
+        with pytest.raises(RuntimeError, match="Permission denied while installing Finder Quick Action"):
+            install_macos_service_user(home=tmp_path, cli_path=tmp_path / "bin" / "transcodetagsmp3")

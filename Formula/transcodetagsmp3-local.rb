@@ -1,9 +1,10 @@
-class Transcodetagsmp3 < Formula
-  desc "Fix garbled MP3 ID3 tags from CP1251/Latin-1 to UTF-8"
+class Transcodetagsmp3Local < Formula
+  desc "Local dev formula for transcodetagsmp3"
   homepage "https://github.com/uyriq/homebrew-transcodetagsmp3-cli"
-  url "https://github.com/uyriq/homebrew-transcodetagsmp3-cli/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "REPLACE_WITH_RELEASE_SHA256"
+  url "file:///tmp/transcodetagsmp3-local.tar.gz"
+  sha256 "63c2a959ba070cc23a599a45f0c06ebc6f298123c46c5715f9c797448142de9a"
   license "MIT"
+  version "0.2.1-local"
 
   depends_on "python@3.12"
 
@@ -25,7 +26,6 @@ class Transcodetagsmp3 < Formula
 
     py = Formula["python@3.12"].opt_bin/"python3.12"
 
-    # Install mutagen into a private vendor path from a pinned Homebrew resource.
     vendor = libexec/"vendor"
     vendor.mkpath
     resource("mutagen").stage do

@@ -137,8 +137,15 @@ set -euo pipefail
 LOG_PATH={log_quoted}
 mkdir -p "$(dirname "$LOG_PATH")"
 
+ARGS=("$@")
+if [ "${{#ARGS[@]}}" -eq 0 ] && [ ! -t 0 ]; then
+  while IFS= read -r line; do
+    [ -n "$line" ] && ARGS+=("$line")
+  done
+fi
+
 set +e
-OUTPUT=$({cli_quoted} "$@" 2>&1)
+OUTPUT=$({cli_quoted} "${{ARGS[@]}}" 2>&1)
 STATUS=$?
 set -e
 printf "%s\\n" "$OUTPUT" >>"$LOG_PATH"
@@ -254,7 +261,7 @@ def _render_workflow_document(runner_path: Path) -> str:
 \t\t\t\t\t<key>CheckedForUserDefaultShell</key>
 \t\t\t\t\t<true/>
 \t\t\t\t\t<key>inputMethod</key>
-\t\t\t\t\t<integer>0</integer>
+\t\t\t\t\t<integer>1</integer>
 \t\t\t\t\t<key>shell</key>
 \t\t\t\t\t<string>/bin/zsh</string>
 \t\t\t\t\t<key>source</key>
@@ -297,7 +304,7 @@ def _render_workflow_document(runner_path: Path) -> str:
 \t\t\t\t\t<key>0</key>
 \t\t\t\t\t<dict>
 \t\t\t\t\t\t<key>default value</key>
-\t\t\t\t\t\t<integer>0</integer>
+\t\t\t\t\t\t<integer>1</integer>
 \t\t\t\t\t\t<key>name</key>
 \t\t\t\t\t\t<string>inputMethod</string>
 \t\t\t\t\t\t<key>required</key>
@@ -441,16 +448,24 @@ def install_macos_service_user(
             "macOS Quick Action already installed. Re-run with --force to overwrite."
         )
 
-    workflow_dir.mkdir(parents=True, exist_ok=True)
-    app_scripts_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        workflow_dir.mkdir(parents=True, exist_ok=True)
+        app_scripts_dir.mkdir(parents=True, exist_ok=True)
 
-    (workflow_dir / "Info.plist").write_text(_render_workflow_info_plist(), encoding="utf-8")
-    (workflow_dir / "document.wflow").write_text(
-        _render_workflow_document(runner_path), encoding="utf-8"
-    )
+        (workflow_dir / "Info.plist").write_text(_render_workflow_info_plist(), encoding="utf-8")
+        (workflow_dir / "document.wflow").write_text(
+            _render_workflow_document(runner_path), encoding="utf-8"
+        )
 
-    runner_path.write_text(_render_macos_runner_script(resolved_cli, log_path), encoding="utf-8")
-    runner_path.chmod(runner_path.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        runner_path.write_text(_render_macos_runner_script(resolved_cli, log_path), encoding="utf-8")
+        runner_path.chmod(runner_path.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    except PermissionError:
+        raise RuntimeError(
+            "Permission denied while installing Finder Quick Action. "
+            f"Cannot write under {home_dir / 'Library'}. "
+            "Run manually from your user shell: "
+            "transcodetagsmp3 install-macos-service --user --force"
+        ) from None
 
     subprocess.run(
         [
