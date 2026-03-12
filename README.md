@@ -61,6 +61,8 @@ brew install transcodetagsmp3
 
 `brew install` (and `brew upgrade`) automatically installs or updates the Finder Quick Action and runner script via Homebrew's `post_install` hook, so you normally do **not** need to reinstall anything manually.
 
+`brew uninstall transcodetagsmp3` removes the installed Finder Quick Action, runner scripts, and log file for the current user on macOS.
+
 If the Quick Action is missing, broken, or you want to force a reinstall (for example, after troubleshooting an upgrade), run:
 
 ```bash

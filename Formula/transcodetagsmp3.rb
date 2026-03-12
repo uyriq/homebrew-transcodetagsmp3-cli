@@ -47,6 +47,16 @@ class Transcodetagsmp3 < Formula
     end
   end
 
+  def uninstall
+    return unless OS.mac?
+
+    home = Pathname.new(Dir.home)
+    rm_rf home/"Library/Services/TranscodeTagsMP3.workflow"
+    rm_rf home/"Library/Application Scripts/TranscodeTagsMP3"
+    rm_f home/"Library/Logs/TranscodeTagsMP3.log"
+    quiet_system "/System/Library/CoreServices/pbs", "-flush"
+  end
+
   test do
     assert_match "usage:", shell_output("#{bin}/transcodetagsmp3 --help")
   end
