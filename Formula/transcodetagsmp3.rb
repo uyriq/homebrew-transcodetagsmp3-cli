@@ -1,8 +1,8 @@
 class Transcodetagsmp3 < Formula
   desc "Fix garbled MP3 ID3 tags from CP1251/Latin-1 to UTF-8"
   homepage "https://github.com/uyriq/homebrew-transcodetagsmp3-cli"
-  url "https://github.com/uyriq/homebrew-transcodetagsmp3-cli/releases/download/v0.2.2/transcodetagsmp3-v0.2.2.tar.gz"
-  sha256 "3a5d63780dbd332f4c8c809a49ed7fbf30f5268025b0f896b61912888a29aa23"
+  url "https://github.com/uyriq/homebrew-transcodetagsmp3-cli/releases/download/v0.2.3/transcodetagsmp3-v0.2.3.tar.gz"
+  sha256 "9a194ea52600b5f222dc9ba2e1af0e676fc0bd08f75c16f60c6732cfdceeacaf"
   license "MIT"
 
   depends_on "python@3.12"
